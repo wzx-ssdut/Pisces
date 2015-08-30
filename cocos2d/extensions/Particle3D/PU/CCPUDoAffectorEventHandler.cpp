@@ -32,7 +32,7 @@ NS_CC_BEGIN
 const bool PUDoAffectorEventHandler::DEFAULT_PRE_POST = false;
 
 //-----------------------------------------------------------------------
-PUDoAffectorEventHandler::PUDoAffectorEventHandler(void) : 
+PUDoAffectorEventHandler::PUDoAffectorEventHandler() :
 PUEventHandler(),
 _prePost(DEFAULT_PRE_POST)
 {

@@ -27,7 +27,6 @@ THE SOFTWARE.
 
 #include <stdarg.h>
 #include "2d/CCLayer.h"
-#include "base/CCScriptSupport.h"
 #include "platform/CCDevice.h"
 #include "renderer/CCRenderer.h"
 #include "renderer/ccGLStateCache.h"
@@ -35,8 +34,6 @@ THE SOFTWARE.
 #include "base/CCDirector.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventListenerTouch.h"
-#include "base/CCEventTouch.h"
-#include "base/CCEventKeyboard.h"
 #include "base/CCEventListenerKeyboard.h"
 #include "base/CCEventAcceleration.h"
 #include "base/CCEventListenerAcceleration.h"
@@ -80,13 +77,11 @@ bool Layer::init()
 Layer *Layer::create()
 {
     Layer *ret = new (std::nothrow) Layer();
-    if (ret && ret->init())
-    {
+    if (ret && ret->init()) {
         ret->autorelease();
         return ret;
     }
-    else
-    {
+    else {
         CC_SAFE_DELETE(ret);
         return nullptr;
     }
@@ -424,11 +419,6 @@ std::string Layer::getDescription() const
     return StringUtils::format("<Layer | Tag = %d>", _tag);
 }
 
-__LayerRGBA::__LayerRGBA()
-{
-    CCLOG("LayerRGBA deprecated.");
-}
-
 
 #if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
 #pragma GCC diagnostic warning "-Wdeprecated-declarations"
@@ -590,7 +580,7 @@ void LayerColor::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
     }
 }
 
-void LayerColor::onDraw(const Mat4& transform, uint32_t flags)
+void LayerColor::onDraw(const Mat4& transform, uint32_t /*flags*/)
 {
     getGLProgram()->use();
     getGLProgram()->setUniformsForBuiltins(transform);

@@ -30,8 +30,6 @@ THE SOFTWARE.
 
 #include "2d/CCNode.h"
 
-#include <algorithm>
-#include <string>
 #include <regex>
 
 #include "base/CCDirector.h"
@@ -39,11 +37,9 @@ THE SOFTWARE.
 #include "base/CCEventDispatcher.h"
 #include "2d/CCCamera.h"
 #include "2d/CCActionManager.h"
-#include "2d/CCScene.h"
 #include "2d/CCComponent.h"
 #include "2d/CCComponentContainer.h"
 #include "renderer/CCGLProgram.h"
-#include "renderer/CCGLProgramState.h"
 #include "renderer/CCMaterial.h"
 #include "math/TransformUtils.h"
 
@@ -66,9 +62,9 @@ NS_CC_BEGIN
 
 bool nodeComparisonLess(Node* n1, Node* n2)
 {
-    return( n1->getLocalZOrder() < n2->getLocalZOrder() ||
-           ( n1->getLocalZOrder() == n2->getLocalZOrder() && n1->getOrderOfArrival() < n2->getOrderOfArrival() )
-           );
+    return (n1->getLocalZOrder() < n2->getLocalZOrder() ||
+            (n1->getLocalZOrder() == n2->getLocalZOrder() && n1->getOrderOfArrival() < n2->getOrderOfArrival())
+    );
 }
 
 // FIXME:: Yes, nodes might have a sort problem once every 15 days if the game runs at 60 FPS and each frame sprites are reordered.
@@ -169,7 +165,7 @@ Node * Node::create()
 
 Node::~Node()
 {
-    CCLOGINFO( "deallocing Node: %p - tag: %i", this, _tag );
+    CCLOGINFO("deallocing Node: %p - tag: %i", this, _tag);
     
 #if CC_ENABLE_SCRIPT_BINDING
     if (_updateScriptHandler)
@@ -305,13 +301,6 @@ void Node::setLocalZOrder(int z)
     _eventDispatcher->setDirtyForNode(this);
 }
 
-/// zOrder setter : private method
-/// used internally to alter the zOrder variable. DON'T call this method manually
-void Node::_setLocalZOrder(int z)
-{
-    _localZOrder = z;
-}
-
 void Node::setGlobalZOrder(float globalZOrder)
 {
     if (_globalZOrder != globalZOrder)
@@ -389,8 +378,15 @@ void Node::updateRotationQuat()
     // convert Euler angle to quaternion
     // when _rotationZ_X == _rotationZ_Y, _rotationQuat = RotationZ_X * RotationY * RotationX
     // when _rotationZ_X != _rotationZ_Y, _rotationQuat = RotationY * RotationX
-    float halfRadx = CC_DEGREES_TO_RADIANS(_rotationX / 2.f), halfRady = CC_DEGREES_TO_RADIANS(_rotationY / 2.f), halfRadz = _rotationZ_X == _rotationZ_Y ? -CC_DEGREES_TO_RADIANS(_rotationZ_X / 2.f) : 0;
-    float coshalfRadx = cosf(halfRadx), sinhalfRadx = sinf(halfRadx), coshalfRady = cosf(halfRady), sinhalfRady = sinf(halfRady), coshalfRadz = cosf(halfRadz), sinhalfRadz = sinf(halfRadz);
+    float halfRadx = CC_DEGREES_TO_RADIANS(_rotationX / 2.f);
+    float halfRady = CC_DEGREES_TO_RADIANS(_rotationY / 2.f);
+    float halfRadz = _rotationZ_X == _rotationZ_Y ? -CC_DEGREES_TO_RADIANS(_rotationZ_X / 2.f) : 0;
+    float coshalfRadx = cosf(halfRadx);
+    float sinhalfRadx = sinf(halfRadx);
+    float coshalfRady = cosf(halfRady);
+    float sinhalfRady = sinf(halfRady);
+    float coshalfRadz = cosf(halfRadz);
+    float sinhalfRadz = sinf(halfRadz);
     _rotationQuat.x = sinhalfRadx * coshalfRady * coshalfRadz - coshalfRadx * sinhalfRady * sinhalfRadz;
     _rotationQuat.y = coshalfRadx * sinhalfRady * coshalfRadz + sinhalfRadx * coshalfRady * sinhalfRadz;
     _rotationQuat.z = coshalfRadx * coshalfRady * sinhalfRadz - sinhalfRadx * sinhalfRady * coshalfRadz;
@@ -464,7 +460,7 @@ void Node::setRotationSkewY(float rotationY)
 }
 
 /// scale getter
-float Node::getScale(void) const
+float Node::getScale() const
 {
     CCASSERT( _scaleX == _scaleY, "CCNode#scale. ScaleX != ScaleY. Don't know which one to return");
     return _scaleX;
@@ -1279,7 +1275,7 @@ void Node::sortAllChildren()
 void Node::draw()
 {
     auto renderer = _director->getRenderer();
-    draw(renderer, _modelViewTransform, true);
+    draw(renderer, _modelViewTransform, 1U);
 }
 
 void Node::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags)
@@ -1290,7 +1286,7 @@ void Node::visit()
 {
     auto renderer = _director->getRenderer();
     auto& parentTransform = _director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
-    visit(renderer, parentTransform, true);
+    visit(renderer, parentTransform, 1U);
 }
 
 uint32_t Node::processParentFlags(const Mat4& parentTransform, uint32_t parentFlags)
@@ -1722,16 +1718,6 @@ void Node::pause()
     _eventDispatcher->pauseEventListenersForTarget(this);
 }
 
-void Node::resumeSchedulerAndActions()
-{
-    resume();
-}
-
-void Node::pauseSchedulerAndActions()
-{
-    pause();
-}
-
 // override me
 void Node::update(float fDelta)
 {
@@ -1857,8 +1843,8 @@ const Mat4& Node::getNodeToParentTransform() const
         {
             float skewMatArray[16] =
             {
-                1, (float)tanf(CC_DEGREES_TO_RADIANS(_skewY)), 0, 0,
-                (float)tanf(CC_DEGREES_TO_RADIANS(_skewX)), 1, 0, 0,
+                1, tanf(CC_DEGREES_TO_RADIANS(_skewY)), 0, 0,
+                tanf(CC_DEGREES_TO_RADIANS(_skewX)), 1, 0, 0,
                 0,  0,  1, 0,
                 0,  0,  0, 1
             };
@@ -2156,7 +2142,7 @@ void Node::updateTransformFromPhysics(const Mat4& parentTransform, uint32_t pare
     auto updateBodyTransform = _physicsWorld->_updateBodyTransform;
     if (parentFlags || recordedPosition.x != newPosition.x || recordedPosition.y != newPosition.y)
     {
-        recordedPosition = newPosition;
+        //recordedPosition = newPosition;
         Vec3 vec3(newPosition.x, newPosition.y, 0);
         Vec3 ret;
         parentTransform.getInversed().transformPoint(vec3, &ret);
@@ -2171,7 +2157,7 @@ void Node::updateTransformFromPhysics(const Mat4& parentTransform, uint32_t pare
 
 // MARK: Opacity and Color
 
-GLubyte Node::getOpacity(void) const
+GLubyte Node::getOpacity() const
 {
     return _realOpacity;
 }
@@ -2202,7 +2188,7 @@ void Node::updateDisplayedOpacity(GLubyte parentOpacity)
     }
 }
 
-bool Node::isCascadeOpacityEnabled(void) const
+bool Node::isCascadeOpacityEnabled() const
 {
     return _cascadeOpacityEnabled;
 }
@@ -2248,7 +2234,7 @@ void Node::disableCascadeOpacity()
     }
 }
 
-const Color3B& Node::getColor(void) const
+const Color3B& Node::getColor() const
 {
     return _realColor;
 }
@@ -2281,7 +2267,7 @@ void Node::updateDisplayedColor(const Color3B& parentColor)
     }
 }
 
-bool Node::isCascadeColorEnabled(void) const
+bool Node::isCascadeColorEnabled() const
 {
     return _cascadeColorEnabled;
 }
@@ -2335,13 +2321,6 @@ void Node::setCameraMask(unsigned short mask, bool applyChildren)
             child->setCameraMask(mask, applyChildren);
         }
     }
-}
-
-// MARK: Deprecated
-
-__NodeRGBA::__NodeRGBA()
-{
-    CCLOG("NodeRGBA deprecated.");
 }
 
 NS_CC_END

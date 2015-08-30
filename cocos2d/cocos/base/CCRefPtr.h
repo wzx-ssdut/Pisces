@@ -189,57 +189,39 @@ public:
     
     
     inline bool operator == (const RefPtr<T> & other) const { return _ptr == other._ptr; }
-    
     inline bool operator == (const T * other) const { return _ptr == other; }
-    
     inline bool operator == (typename std::remove_const<T>::type * other) const { return _ptr == other; }
-    
-    inline bool operator == (const std::nullptr_t other) const { return _ptr == other; }
+    inline bool operator == (const std::nullptr_t other) const { return _ptr == nullptr; }
     
     
     inline bool operator != (const RefPtr<T> & other) const { return _ptr != other._ptr; }
-    
     inline bool operator != (const T * other) const { return _ptr != other; }
-    
     inline bool operator != (typename std::remove_const<T>::type * other) const { return _ptr != other; }
-    
-    inline bool operator != (const std::nullptr_t other) const { return _ptr != other; }
+    inline bool operator != (const std::nullptr_t other) const { return _ptr != nullptr; }
     
     
     inline bool operator > (const RefPtr<T> & other) const { return _ptr > other._ptr; }
-    
     inline bool operator > (const T * other) const { return _ptr > other; }
-    
     inline bool operator > (typename std::remove_const<T>::type * other) const { return _ptr > other; }
-    
-    inline bool operator > (const std::nullptr_t other) const { return _ptr > other; }
+    inline bool operator > (const std::nullptr_t other) const { return _ptr != nullptr; } // if _ptr is not nullptr, then is must be positive
     
     
     inline bool operator < (const RefPtr<T> & other) const { return _ptr < other._ptr; }
-    
     inline bool operator < (const T * other) const { return _ptr < other; }
-    
     inline bool operator < (typename std::remove_const<T>::type * other) const { return _ptr < other; }
-    
-    inline bool operator < (const std::nullptr_t other) const { return _ptr < other; }
+    inline bool operator < (const std::nullptr_t other) const { return false; }
     
         
     inline bool operator >= (const RefPtr<T> & other) const { return _ptr >= other._ptr; }
-    
     inline bool operator >= (const T * other) const { return _ptr >= other; }
-    
     inline bool operator >= (typename std::remove_const<T>::type * other) const { return _ptr >= other; }
-    
-    inline bool operator >= (const std::nullptr_t other) const { return _ptr >= other; }
+    inline bool operator >= (const std::nullptr_t other) const { return true; }
     
         
     inline bool operator <= (const RefPtr<T> & other) const { return _ptr <= other._ptr; }
-    
     inline bool operator <= (const T * other) const { return _ptr <= other; }
-    
     inline bool operator <= (typename std::remove_const<T>::type * other) const { return _ptr <= other; }
-    
-    inline bool operator <= (const std::nullptr_t other) const { return _ptr <= other; }
+    inline bool operator <= (const std::nullptr_t other) const { return _ptr == nullptr; }
     
         
     inline operator bool() const { return _ptr != nullptr; }

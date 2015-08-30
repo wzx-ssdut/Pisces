@@ -51,10 +51,27 @@ THE SOFTWARE.
 #endif  // MAX
 
 // some function linux do not have
-#define tanf tan
-#define sqrtf sqrt
-#define cosf cos
-#define sinf sin
+//#define tanf   tan
+//#define sqrtf  sqrt
+//#define cosf   cos
+//#define sinf   sin
+
+inline float tanf(float n) {
+    return (float)tan(n);
+}
+
+inline float sqrtf(float n) {
+    return (float)sqrt(n);
+}
+
+inline float cosf(float n) {
+    return (float)cos(n);
+}
+
+inline float sinf(float n) {
+    return (float)sin(n);
+}
+
 
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 

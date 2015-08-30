@@ -48,15 +48,15 @@ public:
 
     /** Get the indication whether pre- and postprocessing must be done.
     */
-    const bool getPrePost(void) const {return _prePost;};
+    bool getPrePost() const {return _prePost;};
 
     /** Set the indication whether pre- and postprocessing must be done.
     */
-    void setPrePost(const bool prePost){_prePost = prePost;};
+    void setPrePost(bool prePost){_prePost = prePost;};
 
     /** Get the name of the affector that must be enabled or disabled.
     */
-    const std::string& getAffectorName(void) const {return _affectorName;};
+    const std::string& getAffectorName() const {return _affectorName;};
 
     /** Set the name of the affector.
     */
@@ -73,8 +73,8 @@ public:
     virtual void copyAttributesTo (PUEventHandler* eventHandler) override;
 
 CC_CONSTRUCTOR_ACCESS:
-    PUDoAffectorEventHandler(void);
-    virtual ~PUDoAffectorEventHandler(void) {};
+    PUDoAffectorEventHandler();
+    virtual ~PUDoAffectorEventHandler() {};
 
 protected:
     // Identifies the name of affector
