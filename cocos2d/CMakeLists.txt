@@ -48,10 +48,10 @@ message(${BUILDING_STRING})
 set(USE_WEBP_DEFAULT ON)
 set(USE_PREBUILT_LIBS_DEFAULT ON)
 
-option(USE_CHIPMUNK "Use chipmunk for physics library" ON)
+option(USE_CHIPMUNK "Use chipmunk for physics library" OFF)
 option(USE_BOX2D "Use box2d for physics library" OFF)
-option(USE_BULLET "Use bullet for physics3d library" ON)
-option(USE_RECAST "Use Recast for navigation mesh" ON)
+option(USE_BULLET "Use bullet for physics3d library" OFF)
+option(USE_RECAST "Use Recast for navigation mesh" OFF)
 option(USE_WEBP "Use WebP codec" ${USE_WEBP_DEFAULT})
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(DEBUG_MODE "Debug or release?" ON)
@@ -172,7 +172,7 @@ if(USE_BULLET)
 else()
     add_definitions(-DCC_ENABLE_BULLET_INTEGRATION=0)
     add_definitions(-DCC_USE_3D_PHYSICS=0)
-endif(USE_BULLET)
+endif()
 
 # Recast (not prebuilded, exists as source)
 if(USE_RECAST)
@@ -188,7 +188,7 @@ if(USE_RECAST)
     add_definitions(-DCC_USE_NAVMESH=1)
 else()
     add_definitions(-DCC_USE_NAVMESH=0)
-endif(USE_RECAST)
+endif()
 
 # Tinyxml2 (not prebuilded, exists as source)
 if(USE_PREBUILT_LIBS)
@@ -211,23 +211,14 @@ cocos_find_package(ZLIB ZLIB REQUIRED)
 # dists have packages from zlib, thats very old for us.
 # moreover our embedded version modified to quick provide
 # functionality needed by cocos.
-if(USE_PREBUILT_LIBS OR NOT MINGW)
-    #TODO: hack! should be in external/unzip/CMakeLists.txt
-    include_directories(${ZLIB_INCLUDE_DIRS})
-    add_subdirectory(external/unzip)
-    set(MINIZIP_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/unzip ${ZLIB_INCLUDE_DIRS})
-    set(MINIZIP_LIBRARIES unzip ${ZLIB_LIBRARIES})
-    message(STATUS "MINIZIP include dirs: ${MINIZIP_INCLUDE_DIRS}")
-else()
-    cocos_find_package(MINIZIP MINIZIP REQUIRED)
-    # double check that we have needed functions
-    include(CheckLibraryExists)
-    check_library_exists(${MINIZIP_LIBRARIES} "unzGoToFirstFile2" "" MINIZIP_HAS_GOTOFIRSTFILE2)
-    if(NOT MINIZIP_HAS_GOTOFIRSTFILE2)
-        message(FATAL_ERROR "Minizip library on you system very old. Please use recent version from https://github.com/nmoinvaz/minizip or enable USE_PREBUILT_LIBS")
-    endif()
-    add_definitions(-DMINIZIP_FROM_SYSTEM)
-endif()
+
+#TODO: hack! should be in external/unzip/CMakeLists.txt
+include_directories(${ZLIB_INCLUDE_DIRS})
+add_subdirectory(external/unzip)
+set(MINIZIP_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/unzip ${ZLIB_INCLUDE_DIRS})
+set(MINIZIP_LIBRARIES unzip ${ZLIB_LIBRARIES})
+message(STATUS "MINIZIP include dirs: ${MINIZIP_INCLUDE_DIRS}")
+
 
 cocos_find_package(PNG PNG REQUIRED)
 cocos_find_package(TIFF TIFF REQUIRED)
