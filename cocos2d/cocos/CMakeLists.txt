@@ -47,11 +47,6 @@ include(audio/CMakeLists.txt)
 include_directories(audio/include)
 include(storage/CMakeLists.txt)
 
-if(BUILD_EDITOR_COCOSBUILDER)
-include(editor-support/cocosbuilder/CMakeLists.txt)
-set(COCOS_EDITOR_SUPPORT_SRC ${COCOS_EDITOR_SUPPORT_SRC} ${COCOS_CCB_SRC})
-endif(BUILD_EDITOR_COCOSBUILDER)
-
 if(BUILD_EDITOR_COCOSTUDIO)
 include(editor-support/cocostudio/CMakeLists.txt)
 set(COCOS_EDITOR_SUPPORT_SRC ${COCOS_EDITOR_SUPPORT_SRC} ${COCOS_CS_SRC})

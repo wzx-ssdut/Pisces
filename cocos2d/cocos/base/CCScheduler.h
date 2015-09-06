@@ -84,7 +84,7 @@ public:
     /** Initializes a timer with a target, a selector and an interval in seconds, repeat in number of times to repeat, delay in seconds. */
     bool initWithSelector(Scheduler* scheduler, SEL_SCHEDULE selector, Ref* target, float seconds, unsigned int repeat, float delay);
     
-    inline SEL_SCHEDULE getSelector() const { return _selector; };
+    inline SEL_SCHEDULE getSelector() const { return _selector; }
     
     virtual void trigger() override;
     virtual void cancel() override;
@@ -121,7 +121,7 @@ class CC_DLL TimerScriptHandler : public Timer
 {
 public:
     bool initWithScriptHandler(int handler, float seconds);
-    inline int getScriptHandler() const { return _scriptHandler; };
+    inline int getScriptHandler() const { return _scriptHandler; }
     
     virtual void trigger() override;
     virtual void cancel() override;

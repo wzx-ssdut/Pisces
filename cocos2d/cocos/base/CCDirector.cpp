@@ -53,15 +53,12 @@ THE SOFTWARE.
 #include "base/CCUserDefault.h"
 #include "base/ccFPSImages.h"
 #include "base/CCScheduler.h"
-#include "base/ccMacros.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventCustom.h"
-#include "base/CCConsole.h"
 #include "base/CCAutoreleasePool.h"
 #include "base/CCConfiguration.h"
 #include "base/CCAsyncTaskPool.h"
 #include "platform/CCApplication.h"
-//#include "platform/CCGLViewImpl.h"
 
 #if CC_ENABLE_SCRIPT_BINDING
 #include "CCScriptSupport.h"
@@ -85,7 +82,7 @@ NS_CC_BEGIN
 static DisplayLinkDirector *s_SharedDirector = nullptr;
 
 #define kDefaultFPS        60  // 60 frames per second
-extern const char* cocos2dVersion(void);
+extern const char* cocos2dVersion();
 
 const char *Director::EVENT_PROJECTION_CHANGED = "director_projection_changed";
 const char *Director::EVENT_AFTER_DRAW = "director_after_draw";
@@ -109,7 +106,7 @@ Director::Director()
 {
 }
 
-bool Director::init(void)
+bool Director::init()
 {
     setDefaultValues();
 
@@ -172,7 +169,7 @@ bool Director::init(void)
     return true;
 }
 
-Director::~Director(void)
+Director::~Director()
 {
     CCLOGINFO("deallocing Director: %p", this);
 
@@ -206,7 +203,7 @@ Director::~Director(void)
     s_SharedDirector = nullptr;
 }
 
-void Director::setDefaultValues(void)
+void Director::setDefaultValues()
 {
     Configuration *conf = Configuration::getInstance();
 
@@ -647,7 +644,7 @@ void Director::setProjection(Projection projection)
     _eventDispatcher->dispatchEvent(_eventProjectionChanged);
 }
 
-void Director::purgeCachedData(void)
+void Director::purgeCachedData()
 {
     FontFNT::purgeCachedData();
     FontAtlasCache::purgeCachedData();
@@ -664,7 +661,7 @@ void Director::purgeCachedData(void)
     FileUtils::getInstance()->purgeCachedEntries();
 }
 
-float Director::getZEye(void) const
+float Director::getZEye() const
 {
     return (_winSizeInPoints.height / 1.1566f);
 }
@@ -755,7 +752,7 @@ Vec2 Director::convertToUI(const Vec2& glPoint)
     return Vec2(glSize.width*(clipCoord.x*0.5 + 0.5) * factor, glSize.height*(-clipCoord.y*0.5 + 0.5) * factor);
 }
 
-const Size& Director::getWinSize(void) const
+const Size& Director::getWinSize() const
 {
     return _winSizeInPoints;
 }
