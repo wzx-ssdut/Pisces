@@ -51,7 +51,7 @@ NS_CC_BEGIN
 
 Layer *Layer::create() {
     Layer *ret = new (std::nothrow) Layer();
-    if (ret && ret->init()) {
+    if (ret->init()) {
         ret->autorelease();
         return ret;
     }

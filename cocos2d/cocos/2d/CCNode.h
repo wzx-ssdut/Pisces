@@ -443,9 +443,6 @@ public:
      * Positive values rotate node clockwise, and negative values for anti-clockwise.
      *
      * @param rotationX    The X rotation in degrees which performs a horizontal rotational skew.
-     *
-     * @warning The physics body doesn't support this.
-     * @js setRotationX
      */
     virtual void setRotationSkewX(float rotationX);
     virtual float getRotationSkewX() const;
@@ -453,7 +450,8 @@ public:
     /**
      * Sets the Y rotation (angle) of the node in degrees which performs a vertical rotational skew.
      *
-     * The difference between `setRotationalSkew()` and `setSkew()` is that the first one simulate Flash's skew functionality,
+     * The difference between `setRotationalSkew()` and `setSkew()` is that
+     * the first one simulate Flash's skew functionality,
      * while the second one uses the real skew function.
      *
      * 0 is the default rotation angle.
@@ -1567,12 +1565,6 @@ protected:
 
     bool _reorderChildDirty;          ///< children order dirty flag
     bool _isTransitionFinished;       ///< flag to indicate whether the transition was finished
-
-#if CC_ENABLE_SCRIPT_BINDING
-    int _scriptHandler;               ///< script handler for onEnter() & onExit(), used in Javascript binding and Lua binding.
-    int _updateScriptHandler;         ///< script handler for update() callback per frame, which is invoked from lua & javascript.
-    ccScriptType _scriptType;         ///< type of script binding, lua or javascript
-#endif
     
     ComponentContainer *_componentContainer;        ///< Dictionary of components
 
@@ -1590,10 +1582,10 @@ protected:
     // camera mask, it is visible only when _cameraMask & current camera' camera flag is true
     unsigned short _cameraMask;
     
-    std::function<void()> _onEnterCallback;
-    std::function<void()> _onExitCallback;
-    std::function<void()> _onEnterTransitionDidFinishCallback;
-    std::function<void()> _onExitTransitionDidStartCallback;
+    std::function<void()> _onEnterCallback = nullptr;
+    std::function<void()> _onExitCallback = nullptr;
+    std::function<void()> _onEnterTransitionDidFinishCallback = nullptr;
+    std::function<void()> _onExitTransitionDidStartCallback = nullptr;
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Node);

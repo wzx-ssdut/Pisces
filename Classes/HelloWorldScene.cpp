@@ -16,9 +16,25 @@ bool HelloWorld::init() {
         return false;
     }
 
-    auto sprite = Sprite::create("HelloWorld.png");
-    sprite->setNormalizedPosition(Vec2(0.5f, 0.5f));
-    this->addChild(sprite, 0);
-    
+    auto sp1 = Sprite::create("HelloWorld.png");
+    sp1->setNormalizedPosition(Vec2(0.25f, 0.25f));
+    sp1->setScale(0.5f);
+    sp1->setSkewX(45.0f);
+    this->addChild(sp1);
+
+    auto sp2 = Sprite::create("HelloWorld.png");
+    sp2->setNormalizedPosition(Vec2(0.75f, 0.25f));
+    sp2->setScale(0.5f);
+    sp2->setRotationSkewX(45.0f);
+    this->addChild(sp2);
+
+    /*
+    auto sp3 = Sprite::create("HelloWorld.png");
+    sp3->setNormalizedPosition(Vec2(0.75f, 0.75f));
+    sp3->setScale(0.5f);
+    sp3->setRotationSkewY(45.0f);
+    this->addChild(sp3);
+    */
+
     return true;
 }

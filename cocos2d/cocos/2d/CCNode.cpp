@@ -110,21 +110,7 @@ Node::Node()
 , _ignoreAnchorPointForPosition(false)
 , _reorderChildDirty(false)
 , _isTransitionFinished(false)
-#if CC_ENABLE_SCRIPT_BINDING
-, _updateScriptHandler(0)
-#endif
 , _componentContainer(nullptr)
-#if CC_USE_PHYSICS
-, _physicsBody(nullptr)
-, _physicsScaleStartX(1.0f)
-, _physicsScaleStartY(1.0f)
-, _physicsRotation(0.0f)
-, _physicsTransformDirty(true)
-, _updateTransformFromPhysics(true)
-, _physicsWorld(nullptr)
-, _physicsBodyAssociatedWith(0)
-, _physicsRotationOffset(0.0f)
-#endif
 , _displayedOpacity(255)
 , _realOpacity(255)
 , _displayedColor(Color3B::WHITE)
@@ -242,43 +228,25 @@ std::string Node::getDescription() const
 
 // MARK: getters / setters
 
-float Node::getSkewX() const
-{
+float Node::getSkewX() const {
     return _skewX;
 }
-
-void Node::setSkewX(float skewX)
-{
-    if (_skewX == skewX)
+void Node::setSkewX(float skewX) {
+    if (_skewX == skewX) {
         return;
-    
-#if CC_USE_PHYSICS
-    if (_physicsBody != nullptr)
-    {
-        CCLOG("Node WARNING: PhysicsBody doesn't support setSkewX");
     }
-#endif
-    
+
     _skewX = skewX;
     _transformUpdated = _transformDirty = _inverseDirty = true;
 }
 
-float Node::getSkewY() const
-{
+float Node::getSkewY() const {
     return _skewY;
 }
-
-void Node::setSkewY(float skewY)
-{
-    if (_skewY == skewY)
+void Node::setSkewY(float skewY) {
+    if (_skewY == skewY) {
         return;
-    
-#if CC_USE_PHYSICS
-    if (_physicsBody != nullptr)
-    {
-        CCLOG("Node WARNING: PhysicsBody doesn't support setSkewY");
     }
-#endif
     
     _skewY = skewY;
     _transformUpdated = _transformDirty = _inverseDirty = true;
@@ -313,37 +281,28 @@ float Node::getGlobalZOrder() const {
 
 
 /// rotation getter
-float Node::getRotation() const
-{
+float Node::getRotation() const {
     CCASSERT(_rotationZ_X == _rotationZ_Y, "CCNode#rotation. RotationX != RotationY. Don't know which one to return");
     return _rotationZ_X;
 }
 
 /// rotation setter
-void Node::setRotation(float rotation)
-{
-    if (_rotationZ_X == rotation)
+void Node::setRotation(float rotation) {
+    if (_rotationZ_X == rotation) {
         return;
+    }
     
     _rotationZ_X = _rotationZ_Y = rotation;
     _transformUpdated = _transformDirty = _inverseDirty = true;
-#if CC_USE_PHYSICS
-    if (_physicsWorld && _physicsBodyAssociatedWith > 0)
-    {
-        _physicsWorld->_updateBodyTransform = true;
-    }
-#endif
     
     updateRotationQuat();
 }
 
-float Node::getRotationSkewX() const
-{
+float Node::getRotationSkewX() const {
     return _rotationZ_X;
 }
 
-void Node::setRotation3D(const Vec3& rotation)
-{
+void Node::setRotation3D(const Vec3& rotation) {
     if (_rotationX == rotation.x &&
         _rotationY == rotation.y &&
         _rotationZ_X == rotation.z)
@@ -358,13 +317,6 @@ void Node::setRotation3D(const Vec3& rotation)
     _rotationZ_Y = _rotationZ_X = rotation.z;
     
     updateRotationQuat();
-
-#if CC_USE_PHYSICS
-    if (_physicsBody != nullptr)
-    {
-        CCLOG("Node WARNING: PhysicsBody doesn't support setRotation3D");
-    }
-#endif
 }
 
 Vec3 Node::getRotation3D() const
@@ -422,15 +374,9 @@ Quaternion Node::getRotationQuat() const
 
 void Node::setRotationSkewX(float rotationX)
 {
-    if (_rotationZ_X == rotationX)
+    if (_rotationZ_X == rotationX) {
         return;
-    
-#if CC_USE_PHYSICS
-    if (_physicsBody != nullptr)
-    {
-        CCLOG("Node WARNING: PhysicsBody doesn't support setRotationSkewX");
     }
-#endif
     
     _rotationZ_X = rotationX;
     _transformUpdated = _transformDirty = _inverseDirty = true;
@@ -447,13 +393,6 @@ void Node::setRotationSkewY(float rotationY)
 {
     if (_rotationZ_Y == rotationY)
         return;
-    
-#if CC_USE_PHYSICS
-    if (_physicsBody != nullptr)
-    {
-        CCLOG("Node WARNING: PhysicsBody doesn't support setRotationSkewY");
-    }
-#endif
     
     _rotationZ_Y = rotationY;
     _transformUpdated = _transformDirty = _inverseDirty = true;
@@ -476,12 +415,6 @@ void Node::setScale(float scale)
     
     _scaleX = _scaleY = _scaleZ = scale;
     _transformUpdated = _transformDirty = _inverseDirty = true;
-#if CC_USE_PHYSICS
-    if (_physicsWorld && _physicsBodyAssociatedWith > 0)
-    {
-        _physicsWorld->_updateBodyTransform = true;
-    }
-#endif
 }
 
 /// scaleX getter
@@ -499,12 +432,6 @@ void Node::setScale(float scaleX,float scaleY)
     _scaleX = scaleX;
     _scaleY = scaleY;
     _transformUpdated = _transformDirty = _inverseDirty = true;
-#if CC_USE_PHYSICS
-    if (_physicsWorld && _physicsBodyAssociatedWith > 0)
-    {
-        _physicsWorld->_updateBodyTransform = true;
-    }
-#endif
 }
 
 /// scaleX setter
@@ -515,12 +442,6 @@ void Node::setScaleX(float scaleX)
     
     _scaleX = scaleX;
     _transformUpdated = _transformDirty = _inverseDirty = true;
-#if CC_USE_PHYSICS
-    if (_physicsWorld && _physicsBodyAssociatedWith > 0)
-    {
-        _physicsWorld->_updateBodyTransform = true;
-    }
-#endif
 }
 
 /// scaleY getter
@@ -534,13 +455,6 @@ void Node::setScaleZ(float scaleZ)
 {
     if (_scaleZ == scaleZ)
         return;
-    
-#if CC_USE_PHYSICS
-    if (_physicsBody != nullptr)
-    {
-        CCLOG("Node WARNING: PhysicsBody doesn't support setScaleZ");
-    }
-#endif
     
     _scaleZ = scaleZ;
     _transformUpdated = _transformDirty = _inverseDirty = true;
@@ -560,12 +474,6 @@ void Node::setScaleY(float scaleY)
     
     _scaleY = scaleY;
     _transformUpdated = _transformDirty = _inverseDirty = true;
-#if CC_USE_PHYSICS
-    if (_physicsWorld && _physicsBodyAssociatedWith > 0)
-    {
-        _physicsWorld->_updateBodyTransform = true;
-    }
-#endif
 }
 
 
@@ -597,12 +505,6 @@ void Node::setPosition(float x, float y)
     
     _transformUpdated = _transformDirty = _inverseDirty = true;
     _usingNormalizedPosition = false;
-#if CC_USE_PHYSICS
-    if (_physicsWorld && _physicsBodyAssociatedWith > 0)
-    {
-        _physicsWorld->_updateBodyTransform = true;
-    }
-#endif
 }
 
 void Node::setPosition3D(const Vec3& position)
@@ -667,12 +569,6 @@ void Node::setNormalizedPosition(const Vec2& position)
     _usingNormalizedPosition = true;
     _normalizedPositionDirty = true;
     _transformUpdated = _transformDirty = _inverseDirty = true;
-#if CC_USE_PHYSICS
-    if (_physicsWorld && _physicsBodyAssociatedWith > 0)
-    {
-        _physicsWorld->_updateBodyTransform = true;
-    }
-#endif
 }
 
 ssize_t Node::getChildrenCount() const
@@ -876,26 +772,25 @@ Node* Node::getChildByTag(int tag) const
 {
     CCASSERT(tag != Node::INVALID_TAG, "Invalid tag");
 
-    for (const auto child : _children)
-    {
-        if(child && child->_tag == tag)
+    for (const auto child : _children) {
+        if (child && child->_tag == tag) {
             return child;
+        }
     }
     return nullptr;
 }
 
-Node* Node::getChildByName(const std::string& name) const
-{
+Node* Node::getChildByName(const std::string& name) const {
     CCASSERT(name.length() != 0, "Invalid name");
     
     std::hash<std::string> h;
     size_t hash = h(name);
     
-    for (const auto& child : _children)
-    {
+    for (const auto& child : _children) {
         // Different strings may have the same hash code, but can use it to compare first for speed
-        if(child->_hashOfName == hash && child->_name.compare(name) == 0)
+        if(child->_hashOfName == hash && child->_name.compare(name) == 0) {
             return child;
+        }
     }
     return nullptr;
 }
@@ -1059,25 +954,7 @@ void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::stri
     child->setParent(this);
     child->setOrderOfArrival(s_globalOrderOfArrival++);
 
-#if CC_USE_PHYSICS
-    _physicsBodyAssociatedWith += child->_physicsBodyAssociatedWith;
-auto parentNode = this;
-while (parentNode->_parent)
-{
-    parentNode = parentNode->_parent;
-    parentNode->_physicsBodyAssociatedWith += child->_physicsBodyAssociatedWith;
-}
-
-auto scene = dynamic_cast<Scene*>(parentNode);
-
-// Recursive add children with which have physics body.
-if (scene && scene->getPhysicsWorld())
-{
-    scene->addChildToPhysicsWorld(child);
-}
-#endif
-
-    if( _running ) {
+    if(_running) {
         child->onEnter();
         // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
         if (_isTransitionFinished) {
@@ -1395,39 +1272,24 @@ Mat4 Node::transform(const Mat4& parentTransform)
 
 // MARK: events
 
-void Node::onEnter()
-{
-    if (_onEnterCallback)
+void Node::onEnter() {
+    if (_onEnterCallback) {
         _onEnterCallback();
+    }
 
-    if (_componentContainer && !_componentContainer->isEmpty())
-    {
+    if (_componentContainer && !_componentContainer->isEmpty()) {
         _componentContainer->onEnter();
     }
-
-#if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeJavascript)
-    {
-        if (ScriptEngineManager::sendNodeEventToJS(this, kNodeOnEnter))
-            return;
-    }
-#endif
     
     _isTransitionFinished = false;
     
-    for( const auto &child: _children)
+    for( const auto &child: _children) {
         child->onEnter();
+    }
     
     this->resume();
     
     _running = true;
-    
-#if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeLua)
-    {
-        ScriptEngineManager::sendNodeEventToLua(this, kNodeOnEnter);
-    }
-#endif
 }
 
 void Node::onEnterTransitionDidFinish()
