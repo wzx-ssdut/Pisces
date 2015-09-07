@@ -155,10 +155,10 @@ public:
      */
     virtual void setEnabled(bool value) { _enabled = value; };
 
-    virtual bool onTouchBegan(Touch* touch, Event* event) override;
-    virtual void onTouchEnded(Touch* touch, Event* event) override;
-    virtual void onTouchCancelled(Touch* touch, Event* event) override;
-    virtual void onTouchMoved(Touch* touch, Event* event) override;
+    bool onTouchBegan(Touch* touch, Event* event);
+    void onTouchEnded(Touch* touch, Event* event);
+    void onTouchCancelled(Touch* touch, Event* event);
+    void onTouchMoved(Touch* touch, Event* event);
     
     // overrides
     virtual void removeChild(Node* child, bool cleanup) override;
