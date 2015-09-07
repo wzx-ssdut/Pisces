@@ -703,15 +703,12 @@ const Vec2& Node::getAnchorPointInPoints() const
 }
 
 /// anchorPoint getter
-const Vec2& Node::getAnchorPoint() const
-{
+const Vec2& Node::getAnchorPoint() const {
     return _anchorPoint;
 }
 
-void Node::setAnchorPoint(const Vec2& point)
-{
-    if (! point.equals(_anchorPoint))
-    {
+void Node::setAnchorPoint(const Vec2& point) {
+    if (! point.equals(_anchorPoint)) {
         _anchorPoint = point;
         _anchorPointInPoints.set(_contentSize.width * _anchorPoint.x, _contentSize.height * _anchorPoint.y);
         _transformUpdated = _transformDirty = _inverseDirty = true;

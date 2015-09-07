@@ -48,20 +48,6 @@ THE SOFTWARE.
 NS_CC_BEGIN
 
 // Layer
-Layer::Layer() {
-    _ignoreAnchorPointForPosition = true;
-    setAnchorPoint(Vec2(0.5f, 0.5f));
-}
-Layer::~Layer() {
-}
-
-
-bool Layer::init() {
-    Director * director = Director::getInstance();
-    setContentSize(director->getWinSize());
-    return true;
-}
-
 
 Layer *Layer::create() {
     Layer *ret = new (std::nothrow) Layer();
@@ -76,26 +62,25 @@ Layer *Layer::create() {
 }
 
 
+Layer::Layer() {
+    _ignoreAnchorPointForPosition = true;
+    setAnchorPoint(Vec2(0.5f, 0.5f));
+}
+Layer::~Layer() {
+}
 
-#if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#elif _MSC_VER >= 1400 //vs 2005 or higher
-#pragma warning (push)
-#pragma warning (disable: 4996)
-#endif
 
+bool Layer::init() {
+    Director* director = Director::getInstance();
+    setContentSize(director->getWinSize());
+    return true;
+}
 
 
 std::string Layer::getDescription() const {
     return StringUtils::format("<Layer | Tag = %d>", _tag);
 }
 
-
-#if defined(__GNUC__) && ((__GNUC__ >= 4) || ((__GNUC__ == 3) && (__GNUC_MINOR__ >= 1)))
-#pragma GCC diagnostic warning "-Wdeprecated-declarations"
-#elif _MSC_VER >= 1400 //vs 2005 or higher
-#pragma warning (pop)
-#endif
 /// LayerColor
 
 LayerColor::LayerColor() {
@@ -645,8 +630,7 @@ void LayerMultiplex::switchToAndReleaseMe(int n)
     this->addChild(_layers.at(n));
 }
 
-std::string LayerMultiplex::getDescription() const
-{
+std::string LayerMultiplex::getDescription() const {
     return StringUtils::format("<LayerMultiplex | Tag = %d, Layers = %d", _tag, static_cast<int>(_children.size()));
 }
 
