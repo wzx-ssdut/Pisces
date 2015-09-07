@@ -308,32 +308,26 @@ LayerGradient* LayerGradient::create(const Color4B& start, const Color4B& end, c
     return nullptr;
 }
 
-LayerGradient* LayerGradient::create()
-{
+LayerGradient* LayerGradient::create() {
     LayerGradient* ret = new (std::nothrow) LayerGradient();
-    if (ret && ret->init())
-    {
+    if (ret && ret->init()) {
         ret->autorelease();
     }
-    else
-    {
+    else {
         CC_SAFE_DELETE(ret);
     }
     return ret;
 }
 
-bool LayerGradient::init()
-{
+bool LayerGradient::init() {
     return initWithColor(Color4B(0, 0, 0, 255), Color4B(0, 0, 0, 255));
 }
 
-bool LayerGradient::initWithColor(const Color4B& start, const Color4B& end)
-{
+bool LayerGradient::initWithColor(const Color4B& start, const Color4B& end) {
     return initWithColor(start, end, Vec2(0, -1));
 }
 
-bool LayerGradient::initWithColor(const Color4B& start, const Color4B& end, const Vec2& v)
-{
+bool LayerGradient::initWithColor(const Color4B& start, const Color4B& end, const Vec2& v) {
     _endColor.r  = end.r;
     _endColor.g  = end.g;
     _endColor.b  = end.b;
@@ -347,8 +341,7 @@ bool LayerGradient::initWithColor(const Color4B& start, const Color4B& end, cons
     return LayerColor::initWithColor(Color4B(start.r, start.g, start.b, 255));
 }
 
-void LayerGradient::updateColor()
-{
+void LayerGradient::updateColor() {
     LayerColor::updateColor();
 
     float h = _alongVector.getLength();
@@ -359,8 +352,7 @@ void LayerGradient::updateColor()
     Vec2 u(_alongVector.x / h, _alongVector.y / h);
 
     // Compressed Interpolation mode
-    if (_compressedInterpolation)
-    {
+    if (_compressedInterpolation) {
         float h2 = 1 / ( fabsf(u.x) + fabsf(u.y) );
         u = u * (h2 * (float)c);
     }
@@ -403,73 +395,60 @@ void LayerGradient::updateColor()
     _squareColors[3].a = E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0f * c));
 }
 
-const Color3B& LayerGradient::getStartColor() const
-{
+const Color3B& LayerGradient::getStartColor() const {
     return _realColor;
 }
 
-void LayerGradient::setStartColor(const Color3B& color)
-{
+void LayerGradient::setStartColor(const Color3B& color) {
     setColor(color);
 }
 
-void LayerGradient::setEndColor(const Color3B& color)
-{
+void LayerGradient::setEndColor(const Color3B& color) {
     _endColor = color;
     updateColor();
 }
 
-const Color3B& LayerGradient::getEndColor() const
-{
+const Color3B& LayerGradient::getEndColor() const {
     return _endColor;
 }
 
-void LayerGradient::setStartOpacity(GLubyte o)
-{
+void LayerGradient::setStartOpacity(GLubyte o) {
     _startOpacity = o;
     updateColor();
 }
 
-GLubyte LayerGradient::getStartOpacity() const
-{
+GLubyte LayerGradient::getStartOpacity() const {
     return _startOpacity;
 }
 
-void LayerGradient::setEndOpacity(GLubyte o)
-{
+void LayerGradient::setEndOpacity(GLubyte o) {
     _endOpacity = o;
     updateColor();
 }
 
-GLubyte LayerGradient::getEndOpacity() const
-{
+GLubyte LayerGradient::getEndOpacity() const {
     return _endOpacity;
 }
 
-void LayerGradient::setVector(const Vec2& var)
-{
+void LayerGradient::setVector(const Vec2& var) {
     _alongVector = var;
     updateColor();
 }
 
-const Vec2& LayerGradient::getVector() const
-{
+const Vec2& LayerGradient::getVector() const {
     return _alongVector;
 }
 
-bool LayerGradient::isCompressedInterpolation() const
-{
+bool LayerGradient::isCompressedInterpolation() const {
     return _compressedInterpolation;
 }
 
-void LayerGradient::setCompressedInterpolation(bool compress)
-{
+void LayerGradient::setCompressedInterpolation(bool compress) {
     _compressedInterpolation = compress;
     updateColor();
 }
 
-std::string LayerGradient::getDescription() const
-{
+std::string LayerGradient::getDescription() const {
     return StringUtils::format("<LayerGradient | Tag = %d>", _tag);
 }
 
@@ -480,8 +459,7 @@ LayerMultiplex::LayerMultiplex()
 {
 }
 
-LayerMultiplex::~LayerMultiplex()
-{
+LayerMultiplex::~LayerMultiplex() {
     for(const auto &layer : _layers) {
         layer->cleanup();
     }
@@ -505,8 +483,7 @@ LayerMultiplex * LayerMultiplex::createVariadic(Layer * layer, ...)
     return nullptr;
 }
 #else
-LayerMultiplex * LayerMultiplex::create(Layer * layer, ...)
-{
+LayerMultiplex * LayerMultiplex::create(Layer * layer, ...) {
     va_list args;
     va_start(args,layer);
 
@@ -523,20 +500,16 @@ LayerMultiplex * LayerMultiplex::create(Layer * layer, ...)
 }
 #endif
 
-LayerMultiplex * LayerMultiplex::createWithLayer(Layer* layer)
-{
+LayerMultiplex * LayerMultiplex::createWithLayer(Layer* layer) {
     return LayerMultiplex::create(layer, nullptr);
 }
 
-LayerMultiplex* LayerMultiplex::create()
-{
+LayerMultiplex* LayerMultiplex::create() {
     LayerMultiplex* ret = new (std::nothrow) LayerMultiplex();
-    if (ret && ret->init())
-    {
+    if (ret && ret->init()) {
         ret->autorelease();
     }
-    else
-    {
+    else {
         CC_SAFE_DELETE(ret);
     }
     return ret;
@@ -545,36 +518,29 @@ LayerMultiplex* LayerMultiplex::create()
 LayerMultiplex* LayerMultiplex::createWithArray(const Vector<Layer*>& arrayOfLayers)
 {
     LayerMultiplex* ret = new (std::nothrow) LayerMultiplex();
-    if (ret && ret->initWithArray(arrayOfLayers))
-    {
+    if (ret && ret->initWithArray(arrayOfLayers)) {
         ret->autorelease();
     }
-    else
-    {
+    else {
         CC_SAFE_DELETE(ret);
     }
     return ret;
 }
 
-void LayerMultiplex::addLayer(Layer* layer)
-{
+void LayerMultiplex::addLayer(Layer* layer) {
     _layers.pushBack(layer);
 }
 
-bool LayerMultiplex::init()
-{
-    if (Layer::init())
-    {
+bool LayerMultiplex::init() {
+    if (Layer::init()) {
         _enabledLayer = 0;
         return true;
     }
     return false;
 }
 
-bool LayerMultiplex::initWithLayers(Layer *layer, va_list params)
-{
-    if (Layer::init())
-    {
+bool LayerMultiplex::initWithLayers(Layer *layer, va_list params) {
+    if (Layer::init()) {
         _layers.reserve(5);
         _layers.pushBack(layer);
 
@@ -592,10 +558,8 @@ bool LayerMultiplex::initWithLayers(Layer *layer, va_list params)
     return false;
 }
 
-bool LayerMultiplex::initWithArray(const Vector<Layer*>& arrayOfLayers)
-{
-    if (Layer::init())
-    {
+bool LayerMultiplex::initWithArray(const Vector<Layer*>& arrayOfLayers) {
+    if (Layer::init()) {
         _layers.reserve(arrayOfLayers.size());
         _layers.pushBack(arrayOfLayers);
 
@@ -606,8 +570,7 @@ bool LayerMultiplex::initWithArray(const Vector<Layer*>& arrayOfLayers)
     return false;
 }
 
-void LayerMultiplex::switchTo(int n)
-{
+void LayerMultiplex::switchTo(int n) {
     CCASSERT( n < _layers.size(), "Invalid index in MultiplexLayer switchTo message" );
 
     this->removeChild(_layers.at(_enabledLayer), true);
@@ -617,8 +580,7 @@ void LayerMultiplex::switchTo(int n)
     this->addChild(_layers.at(n));
 }
 
-void LayerMultiplex::switchToAndReleaseMe(int n)
-{
+void LayerMultiplex::switchToAndReleaseMe(int n) {
     CCASSERT( n < _layers.size(), "Invalid index in MultiplexLayer switchTo message" );
 
     this->removeChild(_layers.at(_enabledLayer), true);
