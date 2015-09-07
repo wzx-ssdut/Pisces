@@ -69,19 +69,15 @@ Scene will create a default camera for you.
 class CC_DLL Scene : public Node
 {
 public:
-    /** Creates a new Scene object. 
-     *
-     * @return An autoreleased Scene object.
-     */
     static Scene *create();
 
     /** Creates a new Scene object with a predefined Size. 
      *
      * @param size The predefined size of scene.
      * @return An autoreleased Scene object.
-     * @js NA
      */
     static Scene *createWithSize(const Size& size);
+
 
     using Node::addChild;
     virtual std::string getDescription() const override;
@@ -92,11 +88,6 @@ public:
      * @js NA
      */
     const std::vector<Camera*>& getCameras() const { return _cameras; }
-
-    /** Get the default camera.
-     * @js NA
-     * @return The default camera of scene.
-     */
     Camera* getDefaultCamera() const { return _defaultCamera; }
 
     /** Get lights.
@@ -143,54 +134,6 @@ protected:
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Scene);
     
-#if (CC_USE_PHYSICS || (CC_USE_3D_PHYSICS && CC_ENABLE_BULLET_INTEGRATION))
-public:
-    virtual void addChild(Node* child, int zOrder, int tag) override;
-    virtual void addChild(Node* child, int zOrder, const std::string &name) override;
-    
-#if CC_USE_PHYSICS
-    /** Get the physics world of the scene.
-     * @return The physics world of the scene.
-     * @js NA
-     */
-    inline PhysicsWorld* getPhysicsWorld() { return _physicsWorld; }
-#endif
-    
-#if CC_USE_3D_PHYSICS && CC_ENABLE_BULLET_INTEGRATION
-    /** Get the 3d physics world of the scene.
-     * @return The 3d physics world of the scene.
-     * @js NA
-     */
-    inline Physics3DWorld* getPhysics3DWorld() { return _physics3DWorld; }
-    
-    /** 
-     * Set Physics3D debug draw camera.
-     */
-    void setPhysics3DDebugCamera(Camera* camera);
-#endif
-    
-    /** Create a scene with physics.
-     * @return An autoreleased Scene object with physics.
-     * @js NA
-     */
-    static Scene *createWithPhysics();
-    
-CC_CONSTRUCTOR_ACCESS:
-    bool initWithPhysics();
-    
-protected:
-    void addChildToPhysicsWorld(Node* child);
-
-#if CC_USE_PHYSICS
-    PhysicsWorld* _physicsWorld;
-#endif
-    
-#if CC_USE_3D_PHYSICS && CC_ENABLE_BULLET_INTEGRATION
-    Physics3DWorld*            _physics3DWorld;
-    Camera*                    _physics3dDebugCamera; //
-#endif
-#endif // (CC_USE_PHYSICS || CC_USE_3D_PHYSICS)
-    
 #if CC_USE_NAVMESH
 public:
     /** set navigation mesh */
@@ -205,11 +148,6 @@ public:
 protected:
     NavMesh*       _navMesh;
     Camera *       _navMeshDebugCamera;
-#endif
-    
-#if (CC_USE_PHYSICS || (CC_USE_3D_PHYSICS && CC_ENABLE_BULLET_INTEGRATION) || CC_USE_NAVMESH)
-public:
-    void stepPhysicsAndNavigation(float deltaTime);
 #endif
 };
 

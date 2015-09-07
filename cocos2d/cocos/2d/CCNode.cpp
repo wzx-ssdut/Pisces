@@ -72,7 +72,7 @@ int Node::s_globalOrderOfArrival = 1;
 
 // MARK: Constructor, Destructor, Init
 
-Node::Node(void)
+Node::Node()
 : _rotationX(0.0f)
 , _rotationY(0.0f)
 , _rotationZ_X(0.0f)
@@ -149,15 +149,13 @@ Node::Node(void)
     _transform = _inverse = _additionalTransform = Mat4::IDENTITY;
 }
 
-Node * Node::create()
+Node* Node::create()
 {
     Node * ret = new (std::nothrow) Node();
-    if (ret && ret->init())
-    {
+    if (ret && ret->init()) {
         ret->autorelease();
     }
-    else
-    {
+    else {
         CC_SAFE_DELETE(ret);
     }
     return ret;
@@ -218,13 +216,11 @@ bool Node::init()
 void Node::cleanup()
 {
 #if CC_ENABLE_SCRIPT_BINDING
-    if (_scriptType == kScriptTypeJavascript)
-    {
+    if (_scriptType == kScriptTypeJavascript) {
         if (ScriptEngineManager::sendNodeEventToJS(this, kNodeOnCleanup))
             return;
     }
-    else if (_scriptType == kScriptTypeLua)
-    {
+    else if (_scriptType == kScriptTypeLua) {
         ScriptEngineManager::sendNodeEventToLua(this, kNodeOnCleanup);
     }
 #endif // #if CC_ENABLE_SCRIPT_BINDING
@@ -234,8 +230,9 @@ void Node::cleanup()
     this->unscheduleAllCallbacks();
 
     // timers
-    for( const auto &child: _children)
+    for (const auto& child : _children) {
         child->cleanup();
+    }
 }
 
 std::string Node::getDescription() const
@@ -287,28 +284,33 @@ void Node::setSkewY(float skewY)
     _transformUpdated = _transformDirty = _inverseDirty = true;
 }
 
-void Node::setLocalZOrder(int z)
-{
-    if (_localZOrder == z)
+void Node::setLocalZOrder(int z) {
+    if (_localZOrder == z) {
         return;
+    }
     
     _localZOrder = z;
-    if (_parent)
-    {
+    if (_parent) {
         _parent->reorderChild(this, z);
     }
 
     _eventDispatcher->setDirtyForNode(this);
 }
+int Node::getLocalZOrder() const {
+    return _localZOrder;
+}
 
-void Node::setGlobalZOrder(float globalZOrder)
-{
-    if (_globalZOrder != globalZOrder)
-    {
+
+void Node::setGlobalZOrder(float globalZOrder) {
+    if (_globalZOrder != globalZOrder) {
         _globalZOrder = globalZOrder;
         _eventDispatcher->setDirtyForNode(this);
     }
 }
+float Node::getGlobalZOrder() const {
+    return _globalZOrder;
+}
+
 
 /// rotation getter
 float Node::getRotation() const
@@ -1016,99 +1018,90 @@ bool Node::doEnumerate(std::string name, std::function<bool (Node *)> callback) 
     return ret;
 }
 
+
+
+
 /* "add" logic MUST only be on this method
 * If a class want's to extend the 'addChild' behavior it only needs
 * to override this method
 */
-void Node::addChild(Node *child, int localZOrder, int tag)
-{    
+void Node::addChild(Node *child, int localZOrder, int tag) {
     CCASSERT( child != nullptr, "Argument must be non-nil");
     CCASSERT( child->_parent == nullptr, "child already added. It can't be added again");
 
     addChildHelper(child, localZOrder, tag, "", true);
 }
-
-void Node::addChild(Node* child, int localZOrder, const std::string &name)
-{
+void Node::addChild(Node* child, int localZOrder, const std::string &name) {
     CCASSERT(child != nullptr, "Argument must be non-nil");
     CCASSERT(child->_parent == nullptr, "child already added. It can't be added again");
     
     addChildHelper(child, localZOrder, INVALID_TAG, name, false);
 }
+void Node::addChild(Node *child, int zOrder) {
+    CCASSERT( child != nullptr, "Argument must be non-nil");
+    this->addChild(child, zOrder, child->_name);
+}
+void Node::addChild(Node *child) {
+    CCASSERT( child != nullptr, "Argument must be non-nil");
+    this->addChild(child, child->_localZOrder, child->_name);
+}
 
-void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::string &name, bool setTag)
-{
-    if (_children.empty())
-    {
+
+void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::string &name, bool setTag) {
+    if (_children.empty()) {
         this->childrenAlloc();
     }
-    
+
     this->insertChild(child, localZOrder);
-    
+
     if (setTag)
         child->setTag(tag);
     else
         child->setName(name);
-    
+
     child->setParent(this);
     child->setOrderOfArrival(s_globalOrderOfArrival++);
-    
+
 #if CC_USE_PHYSICS
     _physicsBodyAssociatedWith += child->_physicsBodyAssociatedWith;
-    auto parentNode = this;
-    while (parentNode->_parent)
-    {
-        parentNode = parentNode->_parent;
-        parentNode->_physicsBodyAssociatedWith += child->_physicsBodyAssociatedWith;
-    }
+auto parentNode = this;
+while (parentNode->_parent)
+{
+    parentNode = parentNode->_parent;
+    parentNode->_physicsBodyAssociatedWith += child->_physicsBodyAssociatedWith;
+}
 
-    auto scene = dynamic_cast<Scene*>(parentNode);
+auto scene = dynamic_cast<Scene*>(parentNode);
 
-    // Recursive add children with which have physics body.
-    if (scene && scene->getPhysicsWorld())
-    {
-        scene->addChildToPhysicsWorld(child);
-    }
+// Recursive add children with which have physics body.
+if (scene && scene->getPhysicsWorld())
+{
+    scene->addChildToPhysicsWorld(child);
+}
 #endif
-    
-    if( _running )
-    {
+
+    if( _running ) {
         child->onEnter();
         // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
-        if (_isTransitionFinished)
-        {
+        if (_isTransitionFinished) {
             child->onEnterTransitionDidFinish();
         }
     }
-    
-    if (_cascadeColorEnabled)
-    {
+
+    if (_cascadeColorEnabled) {
         updateCascadeColor();
     }
-    
-    if (_cascadeOpacityEnabled)
-    {
+
+    if (_cascadeOpacityEnabled) {
         updateCascadeOpacity();
     }
 }
 
-void Node::addChild(Node *child, int zOrder)
-{
-    CCASSERT( child != nullptr, "Argument must be non-nil");
-    this->addChild(child, zOrder, child->_name);
-}
-
-void Node::addChild(Node *child)
-{
-    CCASSERT( child != nullptr, "Argument must be non-nil");
-    this->addChild(child, child->_localZOrder, child->_name);
-}
 
 void Node::removeFromParent()
 {
     this->removeFromParentAndCleanup(true);
 }
-
 void Node::removeFromParentAndCleanup(bool cleanup)
 {
     if (_parent != nullptr)
@@ -1116,6 +1109,7 @@ void Node::removeFromParentAndCleanup(bool cleanup)
         _parent->removeChild(this,cleanup);
     } 
 }
+
 
 /* "remove" logic MUST only be on this method
 * If a class want's to extend the 'removeChild' behavior it only needs
@@ -2041,173 +2035,47 @@ void Node::removeAllComponents()
         _componentContainer->removeAll();
 }
 
-#if CC_USE_PHYSICS
-
-// MARK: Physics
-
-void Node::setPhysicsBody(PhysicsBody* body)
-{
-    if (_physicsBody == body)
-    {
-        return;
-    }
-    
-    if (_physicsBody)
-    {
-        _physicsBody->removeFromWorld();
-        _physicsBody->_node = nullptr;
-        _physicsBody->release();
-        _physicsBody = nullptr;
-
-        _physicsBodyAssociatedWith--;
-        auto parentNode = this;
-        while (parentNode->_parent)
-        {
-            parentNode = parentNode->_parent;
-            parentNode->_physicsBodyAssociatedWith--;
-        }
-    }
-
-    if (body)
-    {
-        if (body->getNode())
-        {
-            body->getNode()->setPhysicsBody(nullptr);
-        }
-        
-        body->_node = this;
-        body->retain();
-
-        _physicsBody = body;
-        _physicsScaleStartX = _scaleX;
-        _physicsScaleStartY = _scaleY;
-        _physicsRotationOffset = _rotationZ_X;
-
-        _physicsBodyAssociatedWith++;
-        auto parentNode = this;
-        while (parentNode->_parent)
-        {
-            parentNode = parentNode->_parent;
-            parentNode->_physicsBodyAssociatedWith++;
-        }
-
-        auto scene = dynamic_cast<Scene*>(parentNode);
-        if (scene && scene->getPhysicsWorld())
-        {
-            _physicsTransformDirty = true;
-            scene->getPhysicsWorld()->addBody(body);
-        }
-    }
-}
-
-void Node::updatePhysicsBodyTransform(const Mat4& parentTransform, uint32_t parentFlags, float parentScaleX, float parentScaleY)
-{
-    _updateTransformFromPhysics = false;
-    auto flags = processParentFlags(parentTransform, parentFlags);
-    _updateTransformFromPhysics = true;
-    auto scaleX = parentScaleX * _scaleX;
-    auto scaleY = parentScaleY * _scaleY;
-    
-    if (_parent)
-    {
-        _physicsRotation = _parent->_physicsRotation + _rotationZ_X;
-    }
-    if (_physicsBody && ((flags & FLAGS_DIRTY_MASK) || _physicsTransformDirty))
-    {
-        _physicsTransformDirty = false;
-        
-        Vec3 vec3(_contentSize.width * 0.5f, _contentSize.height * 0.5f, 0);
-        Vec3 ret;
-        _modelViewTransform.transformPoint(vec3, &ret);
-        _physicsBody->setPosition(Vec2(ret.x, ret.y));
-
-        parentTransform.getInversed().transformPoint(&ret);
-        _offsetX = ret.x - _position.x;
-        _offsetY = ret.y - _position.y;
-
-        _physicsBody->setScale(scaleX / _physicsScaleStartX, scaleY / _physicsScaleStartY);
-        _physicsBody->setRotation(_physicsRotation - _physicsRotationOffset);
-    }
-
-    for (auto node : _children)
-    {
-        node->updatePhysicsBodyTransform(_modelViewTransform, flags, scaleX, scaleY);
-    }
-}
-
-void Node::updateTransformFromPhysics(const Mat4& parentTransform, uint32_t parentFlags)
-{
-    auto& newPosition = _physicsBody->getPosition();
-    auto& recordedPosition = _physicsBody->_recordedPosition;
-    auto updateBodyTransform = _physicsWorld->_updateBodyTransform;
-    if (parentFlags || recordedPosition.x != newPosition.x || recordedPosition.y != newPosition.y)
-    {
-        //recordedPosition = newPosition;
-        Vec3 vec3(newPosition.x, newPosition.y, 0);
-        Vec3 ret;
-        parentTransform.getInversed().transformPoint(vec3, &ret);
-        setPosition(ret.x - _offsetX, ret.y - _offsetY);
-    }
-    _physicsRotation = _physicsBody->getRotation();
-    setRotation(_physicsRotation - _parent->_physicsRotation + _physicsRotationOffset);
-    _physicsWorld->_updateBodyTransform = updateBodyTransform;
-}
-
-#endif //CC_USE_PHYSICS
-
 // MARK: Opacity and Color
 
-GLubyte Node::getOpacity() const
-{
+GLubyte Node::getOpacity() const {
     return _realOpacity;
 }
 
-GLubyte Node::getDisplayedOpacity() const
-{
+GLubyte Node::getDisplayedOpacity() const {
     return _displayedOpacity;
 }
 
-void Node::setOpacity(GLubyte opacity)
-{
+void Node::setOpacity(GLubyte opacity) {
     _displayedOpacity = _realOpacity = opacity;
     
     updateCascadeOpacity();
 }
 
-void Node::updateDisplayedOpacity(GLubyte parentOpacity)
-{
-    _displayedOpacity = _realOpacity * parentOpacity/255.0;
+void Node::updateDisplayedOpacity(GLubyte parentOpacity) {
+    _displayedOpacity = static_cast<GLubyte>(parentOpacity/255.0f * _realOpacity);
     updateColor();
     
-    if (_cascadeOpacityEnabled)
-    {
-        for(const auto& child : _children)
-        {
+    if (_cascadeOpacityEnabled) {
+        for(const auto& child : _children) {
             child->updateDisplayedOpacity(_displayedOpacity);
         }
     }
 }
 
-bool Node::isCascadeOpacityEnabled() const
-{
+bool Node::isCascadeOpacityEnabled() const {
     return _cascadeOpacityEnabled;
 }
-
-void Node::setCascadeOpacityEnabled(bool cascadeOpacityEnabled)
-{
-    if (_cascadeOpacityEnabled == cascadeOpacityEnabled)
-    {
+void Node::setCascadeOpacityEnabled(bool cascadeOpacityEnabled) {
+    if (_cascadeOpacityEnabled == cascadeOpacityEnabled) {
         return;
     }
     
     _cascadeOpacityEnabled = cascadeOpacityEnabled;
     
-    if (cascadeOpacityEnabled)
-    {
+    if (cascadeOpacityEnabled) {
         updateCascadeOpacity();
     }
-    else
-    {
+    else {
         disableCascadeOpacity();
     }
 }
@@ -2228,34 +2096,29 @@ void Node::disableCascadeOpacity()
 {
     _displayedOpacity = _realOpacity;
     
-    for(const auto& child : _children)
-    {
+    for(const auto& child : _children) {
         child->updateDisplayedOpacity(255);
     }
 }
 
-const Color3B& Node::getColor() const
-{
+const Color3B& Node::getColor() const {
     return _realColor;
 }
 
-const Color3B& Node::getDisplayedColor() const
-{
+const Color3B& Node::getDisplayedColor() const {
     return _displayedColor;
 }
 
-void Node::setColor(const Color3B& color)
-{
+void Node::setColor(const Color3B& color) {
     _displayedColor = _realColor = color;
     
     updateCascadeColor();
 }
 
-void Node::updateDisplayedColor(const Color3B& parentColor)
-{
-    _displayedColor.r = _realColor.r * parentColor.r/255.0;
-    _displayedColor.g = _realColor.g * parentColor.g/255.0;
-    _displayedColor.b = _realColor.b * parentColor.b/255.0;
+void Node::updateDisplayedColor(const Color3B& parentColor) {
+    _displayedColor.r = static_cast<GLubyte>(_realColor.r * parentColor.r/255.0f);
+    _displayedColor.g = static_cast<GLubyte>(_realColor.g * parentColor.g/255.0f);
+    _displayedColor.b = static_cast<GLubyte>(_realColor.b * parentColor.b/255.0f);
     updateColor();
     
     if (_cascadeColorEnabled)
@@ -2267,13 +2130,11 @@ void Node::updateDisplayedColor(const Color3B& parentColor)
     }
 }
 
-bool Node::isCascadeColorEnabled() const
-{
+bool Node::isCascadeColorEnabled() const {
     return _cascadeColorEnabled;
 }
 
-void Node::setCascadeColorEnabled(bool cascadeColorEnabled)
-{
+void Node::setCascadeColorEnabled(bool cascadeColorEnabled) {
     if (_cascadeColorEnabled == cascadeColorEnabled)
     {
         return;
@@ -2310,17 +2171,47 @@ void Node::disableCascadeColor()
     }
 }
 
-// MARK: Camera
-void Node::setCameraMask(unsigned short mask, bool applyChildren)
-{
+
+
+void Node::setOnEnterCallback(const std::function<void()>& callback) {
+    _onEnterCallback = callback;
+}
+const std::function<void()>& Node::getOnEnterCallback() const {
+    return _onEnterCallback;
+}
+
+void Node::setOnExitCallback(const std::function<void()>& callback) {
+    _onExitCallback = callback;
+}
+const std::function<void()>& Node::getOnExitCallback() const {
+    return _onExitCallback;
+}
+
+void Node::setOnEnterTransitionDidFinishCallback(const std::function<void()>& callback) {
+    _onEnterTransitionDidFinishCallback = callback;
+}
+const std::function<void()>& Node::getOnEnterTransitionDidFinishCallback() const {
+    return _onEnterTransitionDidFinishCallback;
+}
+
+void Node::setOnExitTransitionDidStartCallback(const std::function<void()>& callback) {
+    _onExitTransitionDidStartCallback = callback; }
+const std::function<void()>& Node::getOnExitTransitionDidStartCallback() const {
+    return _onExitTransitionDidStartCallback;
+}
+
+
+unsigned short Node::getCameraMask() const {
+    return _cameraMask;
+}
+void Node::setCameraMask(unsigned short mask, bool applyChildren) {
     _cameraMask = mask;
-    if (applyChildren)
-    {
-        for (const auto& child : _children)
-        {
+    if (applyChildren) {
+        for (const auto& child : _children) {
             child->setCameraMask(mask, applyChildren);
         }
     }
 }
+
 
 NS_CC_END

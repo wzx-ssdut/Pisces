@@ -115,21 +115,9 @@ public:
     unsigned int getReferenceCount() const;
 
 protected:
-    /**
-     * Constructor
-     *
-     * The Ref's reference count is 1 after construction.
-     * @js NA
-     */
     Ref();
 
 public:
-    /**
-     * Destructor
-     *
-     * @js NA
-     * @lua NA
-     */
     virtual ~Ref();
 
 protected:

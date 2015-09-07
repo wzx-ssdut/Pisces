@@ -107,19 +107,18 @@ public:
     /**
      * @brief Possible OpenGL projections used by director
      */
-    enum class Projection
-    {
+    enum class Projection {
         /// Sets a 2D projection (orthogonal projection).
-        _2D,
+        _2D = 0,
         
         /// Sets a 3D projection with a fovy=60, znear=0.5f and zfar=1500.
-        _3D,
+        _3D = 1,
         
         /// It calls "updateProjection" on the projection delegate.
-        CUSTOM,
+        CUSTOM = 2,
         
         /// Default projection is 3D projection.
-        DEFAULT = _3D,
+        DEFAULT = 1,
     };
     
     /** 
@@ -158,15 +157,8 @@ public:
     /** Get seconds per frame. */
     inline float getSecondsPerFrame() { return _secondsPerFrame; }
 
-    /** 
-     * Get the GLView.
-     * @lua NA
-     */
+
     inline GLView* getOpenGLView() { return _openGLView; }
-    /** 
-     * Sets the GLView. 
-     * @lua NA
-     */
     void setOpenGLView(GLView *openGLView);
 
     /*
@@ -532,10 +524,10 @@ protected:
     
     /* The _openGLView, where everything is rendered, GLView is a abstract class,cocos2d-x provide GLViewImpl
      which inherit from it as default renderer context,you can have your own by inherit from it*/
-    GLView *_openGLView;
+    GLView* _openGLView = nullptr;
 
     //texture cache belongs to this director
-    TextureCache *_textureCache;
+    TextureCache *_textureCache = nullptr;
 
     double _animationInterval;
     double _oldAnimationInterval;

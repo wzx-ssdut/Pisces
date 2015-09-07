@@ -89,10 +89,8 @@ const char *Director::EVENT_AFTER_DRAW = "director_after_draw";
 const char *Director::EVENT_AFTER_VISIT = "director_after_visit";
 const char *Director::EVENT_AFTER_UPDATE = "director_after_update";
 
-Director* Director::getInstance()
-{
-    if (!s_SharedDirector)
-    {
+Director* Director::getInstance() {
+    if (!s_SharedDirector) {
         s_SharedDirector = new (std::nothrow) DisplayLinkDirector();
         CCASSERT(s_SharedDirector, "FATAL: Not enough memory");
         s_SharedDirector->init();
@@ -106,8 +104,7 @@ Director::Director()
 {
 }
 
-bool Director::init()
-{
+bool Director::init() {
     setDefaultValues();
 
     // scenes
@@ -255,8 +252,7 @@ void Director::drawScene()
     // calculate "global" dt
     calculateDeltaTime();
     
-    if (_openGLView)
-    {
+    if (_openGLView) {
         _openGLView->pollEvents();
     }
 
@@ -312,13 +308,11 @@ void Director::drawScene()
     _totalFrames++;
 
     // swap buffers
-    if (_openGLView)
-    {
+    if (_openGLView) {
         _openGLView->swapBuffers();
     }
 
-    if (_displayStats)
-    {
+    if (_displayStats) {
         calculateMPF();
     }
 }
@@ -360,19 +354,20 @@ float Director::getDeltaTime() const
 {
     return _deltaTime;
 }
-void Director::setOpenGLView(GLView *openGLView)
-{
+
+
+void Director::setOpenGLView(GLView *openGLView) {
     CCASSERT(openGLView, "opengl view should not be null");
 
-    if (_openGLView != openGLView)
-    {
+    if (_openGLView != openGLView) {
         // Configuration. Gather GPU info
         Configuration *conf = Configuration::getInstance();
         conf->gatherGPUInfo();
         CCLOG("%s\n",conf->getInfo().c_str());
 
-        if(_openGLView)
+        if(_openGLView) {
             _openGLView->release();
+        }
         _openGLView = openGLView;
         _openGLView->retain();
 
@@ -381,8 +376,7 @@ void Director::setOpenGLView(GLView *openGLView)
 
         _isStatusLabelUpdated = true;
 
-        if (_openGLView)
-        {
+        if (_openGLView) {
             setGLDefaultValues();
         }
 
@@ -390,8 +384,7 @@ void Director::setOpenGLView(GLView *openGLView)
 
         CHECK_GL_ERROR_DEBUG();
 
-        if (_eventDispatcher)
-        {
+        if (_eventDispatcher) {
             _eventDispatcher->setEnabled(true);
         }
         
@@ -764,12 +757,10 @@ Size Director::getWinSizeInPixels() const
 
 Size Director::getVisibleSize() const
 {
-    if (_openGLView)
-    {
+    if (_openGLView) {
         return _openGLView->getVisibleSize();
     }
-    else
-    {
+    else {
         return Size::ZERO;
     }
 }
@@ -1341,11 +1332,10 @@ void DisplayLinkDirector::stopAnimation()
 void DisplayLinkDirector::setAnimationInterval(double interval)
 {
     _animationInterval = interval;
-    if (! _invalid)
-    {
+    if (!_invalid) {
         stopAnimation();
         startAnimation();
-    }    
+    }
 }
 
 NS_CC_END

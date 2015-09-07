@@ -28,45 +28,38 @@ THE SOFTWARE.
 
 #include "CCApplication-linux.h"
 #include <unistd.h>
-#include <sys/time.h>
-#include <string>
 #include "base/CCDirector.h"
-#include "platform/CCFileUtils.h"
 
 NS_CC_BEGIN
 
 
 // sharedApplication pointer
-Application * Application::sm_pSharedApplication = 0;
+Application * Application::sm_pSharedApplication = nullptr;
 
 static long getCurrentMillSecond() {
     long lLastTime;
     struct timeval stCurrentTime;
 
-    gettimeofday(&stCurrentTime,NULL);
-    lLastTime = stCurrentTime.tv_sec*1000+stCurrentTime.tv_usec*0.001; //millseconds
+    gettimeofday(&stCurrentTime, NULL);
+    lLastTime = static_cast<long>(stCurrentTime.tv_sec*1000+stCurrentTime.tv_usec*0.001); //millseconds
     return lLastTime;
 }
 
-Application::Application()
-: _animationInterval(1.0f/60.0f*1000.0f)
-{
-    CC_ASSERT(! sm_pSharedApplication);
+Application::Application() {
+    CC_ASSERT(nullptr == sm_pSharedApplication);
     sm_pSharedApplication = this;
+    _animationInterval = static_cast<long>(1.0f/60.0f * 1000.0f);
 }
 
-Application::~Application()
-{
+Application::~Application() {
     CC_ASSERT(this == sm_pSharedApplication);
-    sm_pSharedApplication = NULL;
+    sm_pSharedApplication = nullptr;
 }
 
-int Application::run()
-{
+int Application::run() {
     initGLContextAttrs();
     // Initialize instance and cocos2d.
-    if (! applicationDidFinishLaunching())
-    {
+    if (!applicationDidFinishLaunching()) {
         return 0;
     }
 
@@ -97,29 +90,26 @@ int Application::run()
     *  when we want to close the window, we should call Director::end();
     *  then call Director::mainLoop to do release of internal resources
     */
-    if (glview->isOpenGLReady())
-    {
+    if (glview->isOpenGLReady()) {
         director->end();
         director->mainLoop();
         director = nullptr;
     }
     glview->release();
+
     return EXIT_SUCCESS;
 }
 
-void Application::setAnimationInterval(double interval)
-{
+void Application::setAnimationInterval(double interval) {
     //TODO do something else
-    _animationInterval = interval*1000.0f;
+    _animationInterval = static_cast<long>(interval*1000.0f);
 }
 
-Application::Platform Application::getTargetPlatform()
-{
+Application::Platform Application::getTargetPlatform() {
     return Platform::OS_LINUX;
 }
 
-bool Application::openURL(const std::string &url)
-{
+bool Application::openURL(const std::string &url) {
     std::string op = std::string("open ").append(url);
     return system(op.c_str())!=-1;
 }
@@ -127,15 +117,13 @@ bool Application::openURL(const std::string &url)
 //////////////////////////////////////////////////////////////////////////
 // static member function
 //////////////////////////////////////////////////////////////////////////
-Application* Application::getInstance()
-{
+Application* Application::getInstance() {
     CC_ASSERT(sm_pSharedApplication);
     return sm_pSharedApplication;
 }
 
-const char * Application::getCurrentLanguageCode()
-{
-    static char code[3]={0};
+const char * Application::getCurrentLanguageCode() {
+    static char code[3] = {0};
     char *pLanguageName = getenv("LANG");
     if (!pLanguageName)
         return "en";
@@ -147,94 +135,72 @@ const char * Application::getCurrentLanguageCode()
     return code;
 }
 
-LanguageType Application::getCurrentLanguage()
-{
+LanguageType Application::getCurrentLanguage() {
     char *pLanguageName = getenv("LANG");
     LanguageType ret = LanguageType::ENGLISH;
-    if (!pLanguageName)
-    {
+    if (!pLanguageName) {
         return LanguageType::ENGLISH;
     }
     strtok(pLanguageName, "_");
-    if (!pLanguageName)
-    {
+    if (!pLanguageName) {
         return LanguageType::ENGLISH;
     }
     
-    if (0 == strcmp("zh", pLanguageName))
-    {
+    if (0 == strcmp("zh", pLanguageName)) {
         ret = LanguageType::CHINESE;
     }
-    else if (0 == strcmp("en", pLanguageName))
-    {
+    else if (0 == strcmp("en", pLanguageName)) {
         ret = LanguageType::ENGLISH;
     }
-    else if (0 == strcmp("fr", pLanguageName))
-    {
+    else if (0 == strcmp("fr", pLanguageName)) {
         ret = LanguageType::FRENCH;
     }
-    else if (0 == strcmp("it", pLanguageName))
-    {
+    else if (0 == strcmp("it", pLanguageName)) {
         ret = LanguageType::ITALIAN;
     }
-    else if (0 == strcmp("de", pLanguageName))
-    {
+    else if (0 == strcmp("de", pLanguageName)) {
         ret = LanguageType::GERMAN;
     }
-    else if (0 == strcmp("es", pLanguageName))
-    {
+    else if (0 == strcmp("es", pLanguageName)) {
         ret = LanguageType::SPANISH;
     }
-    else if (0 == strcmp("nl", pLanguageName))
-    {
+    else if (0 == strcmp("nl", pLanguageName)) {
         ret = LanguageType::DUTCH;
     }
-    else if (0 == strcmp("ru", pLanguageName))
-    {
+    else if (0 == strcmp("ru", pLanguageName)) {
         ret = LanguageType::RUSSIAN;
     }
-    else if (0 == strcmp("ko", pLanguageName))
-    {
+    else if (0 == strcmp("ko", pLanguageName)) {
         ret = LanguageType::KOREAN;
     }
-    else if (0 == strcmp("ja", pLanguageName))
-    {
+    else if (0 == strcmp("ja", pLanguageName)) {
         ret = LanguageType::JAPANESE;
     }
-    else if (0 == strcmp("hu", pLanguageName))
-    {
+    else if (0 == strcmp("hu", pLanguageName)) {
         ret = LanguageType::HUNGARIAN;
     }
-    else if (0 == strcmp("pt", pLanguageName))
-    {
+    else if (0 == strcmp("pt", pLanguageName)) {
         ret = LanguageType::PORTUGUESE;
     }
-    else if (0 == strcmp("ar", pLanguageName))
-    {
+    else if (0 == strcmp("ar", pLanguageName)) {
         ret = LanguageType::ARABIC;
     }
-    else if (0 == strcmp("nb", pLanguageName))
-    {
+    else if (0 == strcmp("nb", pLanguageName)) {
         ret = LanguageType::NORWEGIAN;
     }
-    else if (0 == strcmp("pl", pLanguageName))
-    {
+    else if (0 == strcmp("pl", pLanguageName)) {
         ret = LanguageType::POLISH;
     }
-    else if (0 == strcmp("tr", pLanguageName))
-    {
+    else if (0 == strcmp("tr", pLanguageName)) {
         ret = LanguageType::TURKISH;
     }
-    else if (0 == strcmp("uk", pLanguageName))
-    {
+    else if (0 == strcmp("uk", pLanguageName)) {
         ret = LanguageType::UKRAINIAN;
     }
-    else if (0 == strcmp("ro", pLanguageName))
-    {
+    else if (0 == strcmp("ro", pLanguageName)) {
         ret = LanguageType::ROMANIAN;
     }
-    else if (0 == strcmp("bg", pLanguageName))
-    {
+    else if (0 == strcmp("bg", pLanguageName)) {
         ret = LanguageType::BULGARIAN;
     }
     

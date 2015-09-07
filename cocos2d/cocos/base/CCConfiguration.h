@@ -59,12 +59,6 @@ public:
      */
     static void destroyInstance();
 
-    /** @deprecated Use getInstance() instead */
-    CC_DEPRECATED_ATTRIBUTE static Configuration *sharedConfiguration();
-
-    /** @deprecated Use destroyInstance() instead */
-    CC_DEPRECATED_ATTRIBUTE static void purgeConfiguration();
-
 public:
     /** Destructor
      * @js NA
@@ -213,7 +207,7 @@ public:
 	void loadConfigFile(const std::string& filename);
 
 private:
-    Configuration(void);
+    Configuration();
     static Configuration    *s_sharedConfiguration;
 	static std::string		s_configfile;
     

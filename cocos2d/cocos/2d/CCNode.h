@@ -53,10 +53,6 @@ class Director;
 class GLProgram;
 class GLProgramState;
 class Material;
-#if CC_USE_PHYSICS
-class PhysicsBody;
-class PhysicsWorld;
-#endif
 
 /**
  * @addtogroup _2d
@@ -155,16 +151,7 @@ public:
      * @param localZOrder The local Z order value.
      */
     virtual void setLocalZOrder(int localZOrder);
-
-
-    /**
-     * Gets the local Z order of this node.
-     *
-     * @see `setLocalZOrder(int)`
-     *
-     * @return The local (relative to its siblings) Z order.
-     */
-    virtual int getLocalZOrder() const { return _localZOrder; }
+    virtual int getLocalZOrder() const;
 
     /**
      Defines the oder in which the nodes are renderer.
@@ -188,14 +175,7 @@ public:
      * @param globalZOrder The global Z order value.
      */
     virtual void setGlobalZOrder(float globalZOrder);
-    /**
-     * Returns the Node's Global Z Order.
-     *
-     * @see `setGlobalZOrder(int)`
-     *
-     * @return The node's global Z order
-     */
-    virtual float getGlobalZOrder() const { return _globalZOrder; }
+    virtual float getGlobalZOrder() const;
 
     /**
      * Sets the scale (x) of the node.
@@ -207,52 +187,10 @@ public:
      * @warning The physics body doesn't support this.
      */
     virtual void setScaleX(float scaleX);
-    /**
-     * Returns the scale factor on X axis of this node
-     *
-     * @see setScaleX(float)
-     *
-     * @return The scale factor on X axis.
-     */
     virtual float getScaleX() const;
-
-
-    /**
-     * Sets the scale (y) of the node.
-     *
-     * It is a scaling factor that multiplies the height of the node and its children.
-     *
-     * @param scaleY   The scale factor on Y axis.
-     *
-     * @warning The physics body doesn't support this.
-     */
     virtual void setScaleY(float scaleY);
-    /**
-     * Returns the scale factor on Y axis of this node
-     *
-     * @see `setScaleY(float)`
-     *
-     * @return The scale factor on Y axis.
-     */
     virtual float getScaleY() const;
-
-    /**
-     * Changes the scale factor on Z axis of this node
-     *
-     * The Default value is 1.0 if you haven't changed it before.
-     *
-     * @param scaleZ   The scale factor on Z axis.
-     *
-     * @warning The physics body doesn't support this.
-     */
     virtual void setScaleZ(float scaleZ);
-    /**
-     * Returns the scale factor on Z axis of this node
-     *
-     * @see `setScaleZ(float)`
-     *
-     * @return The scale factor on Z axis.
-     */
     virtual float getScaleZ() const;
 
 
@@ -266,26 +204,7 @@ public:
      * @warning The physics body doesn't support this.
      */
     virtual void setScale(float scale);
-    /**
-     * Gets the scale factor of the node,  when X and Y have the same scale factor.
-     *
-     * @warning Assert when `_scaleX != _scaleY`
-     * @see setScale(float)
-     *
-     * @return The scale factor of the node.
-     */
     virtual float getScale() const;
-
-     /**
-     * Sets the scale (x,y) of the node.
-     *
-     * It is a scaling factor that multiplies the width and height of the node and its children.
-     *
-     * @param scaleX     The scale factor on X axis.
-     * @param scaleY     The scale factor on Y axis.
-     *
-     * @warning The physics body doesn't support this.
-     */
     virtual void setScale(float scaleX, float scaleY);
 
     /**
@@ -369,21 +288,9 @@ public:
      *
      * @param x The x coordinate of the node.
      */
-    virtual void  setPositionX(float x);
-    /** Gets the x coordinate of the node in its parent's coordinate system.
-     *
-     * @return The x coordinate of the node.
-     */
+    virtual void setPositionX(float x);
     virtual float getPositionX() const;
-    /** Sets the y coordinate of the node in its parent's coordinate system.
-     *
-     * @param y The y coordinate of the node.
-     */
-    virtual void  setPositionY(float y);
-    /** Gets the y coordinate of the node in its parent's coordinate system.
-     *
-     * @return The y coordinate of the node.
-     */
+    virtual void setPositionY(float y);
     virtual float getPositionY() const;
 
     /**
@@ -393,12 +300,6 @@ public:
      * @js NA
      */
     virtual void setPosition3D(const Vec3& position);
-    /**
-     * Returns the position (X,Y,Z) in its parent's coordinate system.
-     *
-     * @return The position (X, Y, and Z) in its parent's coordinate system.
-     * @js NA
-     */
     virtual Vec3 getPosition3D() const;
 
     /**
@@ -415,15 +316,6 @@ public:
      * @js setVertexZ
      */
     virtual void setPositionZ(float positionZ);
-
-    /**
-     * Gets position Z coordinate of this node.
-     *
-     * @see setPositionZ(float)
-     *
-     * @return The position Z coordinate of this node.
-     * @js getVertexZ
-     */
     virtual float getPositionZ() const;
 
     /**
@@ -441,13 +333,6 @@ public:
      * @warning The physics body doesn't support this.
      */
     virtual void setSkewX(float skewX);
-    /**
-     * Returns the X skew angle of the node in degrees.
-     *
-     * @see `setSkewX(float)`
-     *
-     * @return The X skew angle of the node in degrees.
-     */
     virtual float getSkewX() const;
 
 
@@ -489,22 +374,7 @@ public:
      * @param anchorPoint   The anchor point of node.
      */
     virtual void setAnchorPoint(const Vec2& anchorPoint);
-    /**
-     * Returns the anchor point in percent.
-     *
-     * @see `setAnchorPoint(const Vec2&)`
-     *
-     * @return The anchor point of node.
-     */
     virtual const Vec2& getAnchorPoint() const;
-    /**
-     * Returns the anchorPoint in absolute pixels.
-     *
-     * @warning You can only read it. If you wish to modify it, use anchorPoint instead.
-     * @see `getAnchorPoint()`
-     *
-     * @return The anchor point in absolute pixels.
-     */
     virtual const Vec2& getAnchorPointInPoints() const;
 
 
@@ -517,13 +387,6 @@ public:
      * @param contentSize   The untransformed size of the node.
      */
     virtual void setContentSize(const Size& contentSize);
-    /**
-     * Returns the untransformed size of the node.
-     *
-     * @see `setContentSize(const Size&)`
-     *
-     * @return The untransformed size of the node.
-     */
     virtual const Size& getContentSize() const;
 
 
@@ -535,13 +398,6 @@ public:
      * @param visible   true if the node is visible, false if the node is hidden.
      */
     virtual void setVisible(bool visible);
-    /**
-     * Determines if the node is visible.
-     *
-     * @see `setVisible(bool)`
-     *
-     * @return true if the node is visible, false if the node is hidden.
-     */
     virtual bool isVisible() const;
 
 
@@ -554,13 +410,6 @@ public:
      * @param rotation     The rotation of the node in degrees.
      */
     virtual void setRotation(float rotation);
-    /**
-     * Returns the rotation of the node in degrees.
-     *
-     * @see `setRotation(float)`
-     *
-     * @return The rotation of the node in degrees.
-     */
     virtual float getRotation() const;
 
     /**
@@ -573,12 +422,6 @@ public:
      * @js NA
      */
     virtual void setRotation3D(const Vec3& rotation);
-    /**
-     * Returns the rotation (X,Y,Z) in degrees.
-     * 
-     * @return The rotation of the node in 3d.
-     * @js NA
-     */
     virtual Vec3 getRotation3D() const;
     
     /**
@@ -588,14 +431,6 @@ public:
      * @js NA
      */
     virtual void setRotationQuat(const Quaternion& quat);
-    
-    /**
-     * Return the rotation by quaternion, Note that when _rotationZ_X == _rotationZ_Y, the returned quaternion equals to RotationZ_X * RotationY * RotationX,
-     * it equals to RotationY * RotationX otherwise.
-     *
-     * @return The rotation in quaternion.
-     * @js NA
-     */
     virtual Quaternion getRotationQuat() const;
 
     /**
@@ -613,15 +448,6 @@ public:
      * @js setRotationX
      */
     virtual void setRotationSkewX(float rotationX);
-
-    /**
-     * Gets the X rotation (angle) of the node in degrees which performs a horizontal rotation skew.
-     *
-     * @see `setRotationSkewX(float)`
-     *
-     * @return The X rotation in degrees.
-     * @js getRotationX 
-     */
     virtual float getRotationSkewX() const;
 
     /**
@@ -639,15 +465,6 @@ public:
      * @js setRotationY
      */
     virtual void setRotationSkewY(float rotationY);
-
-    /**
-     * Gets the Y rotation (angle) of the node in degrees which performs a vertical rotational skew.
-     *
-     * @see `setRotationSkewY(float)`
-     *
-     * @return The Y rotation in degrees.
-     * @js getRotationY
-     */
     virtual float getRotationSkewY() const;
 
     /**
@@ -661,13 +478,6 @@ public:
      * @param orderOfArrival   The arrival order.
      */
     void setOrderOfArrival(int orderOfArrival);
-    /**
-     * Returns the arrival order, indicates which children is added previously.
-     *
-     * @see `setOrderOfArrival(unsigned int)`
-     *
-     * @return The arrival order.
-     */
     int getOrderOfArrival() const;
 
     /**
@@ -680,13 +490,6 @@ public:
      * @todo This method should be renamed as setIgnoreAnchorPointForPosition(bool) or something with "set".
      */
     virtual void ignoreAnchorPointForPosition(bool ignore);
-    /**
-     * Gets whether the anchor point will be (0,0) when you position this node.
-     *
-     * @see `ignoreAnchorPointForPosition(bool)`
-     *
-     * @return true if the anchor point will be (0,0) when you position this node.
-     */
     virtual bool isIgnoreAnchorPointForPosition() const;
 
     /// @}  end of Setters & Getters for Graphic Properties
@@ -1213,7 +1016,6 @@ public:
      * Composable actions are counted as 1 action. Example:
      *    If you are running 1 Sequence of 7 actions, it will return 1.
      *    If you are running 7 Sequences of 2 actions, it will return 7.
-     * @todo Rename to getNumberOfRunningActions()
      *
      * @return The number of actions that are running plus the ones that are schedule to run.
      */
@@ -1611,39 +1413,6 @@ public:
     virtual void removeAllComponents();
     /// @} end of component functions
 
-
-#if CC_USE_PHYSICS
-    /**
-     * Set the PhysicsBody that let the sprite effect with physics.
-     * @note This method will set anchor point to Vec2::ANCHOR_MIDDLE if body not null, and you cann't change anchor point if node has a physics body.
-     *
-     * @param body A given physics body.
-     */
-    void setPhysicsBody(PhysicsBody* body);
-
-    /**
-     * Get the PhysicsBody the sprite have.
-     *
-     * @return The PhysicsBody the sprite have.
-     */
-    PhysicsBody* getPhysicsBody() const { return _physicsBody; }
-    
-    /**
-     * Remove this node from physics world. it will remove all the physics bodies in it's children too.
-     */
-    void removeFromPhysicsWorld();
-    
-    /** 
-     * Update the transform matrix from physics.
-     */
-    void updateTransformFromPhysics(const Mat4& parentTransform, uint32_t parentFlags);
-
-    /** 
-     * Update physics body transform matrix.
-     */
-    virtual void updatePhysicsBodyTransform(const Mat4& parentTransform, uint32_t parentFlags, float parentScaleX, float parentScaleY);
-#endif
-    
     // overrides
     virtual GLubyte getOpacity() const;
     virtual GLubyte getDisplayedOpacity() const;
@@ -1658,21 +1427,27 @@ public:
     virtual void updateDisplayedColor(const Color3B& parentColor);
     virtual bool isCascadeColorEnabled() const;
     virtual void setCascadeColorEnabled(bool cascadeColorEnabled);
-    
-    virtual void setOpacityModifyRGB(bool value) {CC_UNUSED_PARAM(value);}
-    virtual bool isOpacityModifyRGB() const { return false; };
 
-    void setOnEnterCallback(const std::function<void()>& callback) { _onEnterCallback = callback; }
-    const std::function<void()>& getOnEnterCallback() const { return _onEnterCallback; }   
-    void setOnExitCallback(const std::function<void()>& callback) { _onExitCallback = callback; }
-    const std::function<void()>& getOnExitCallback() const { return _onExitCallback; }   
-    void setonEnterTransitionDidFinishCallback(const std::function<void()>& callback) { _onEnterTransitionDidFinishCallback = callback; }
-    const std::function<void()>& getonEnterTransitionDidFinishCallback() const { return _onEnterTransitionDidFinishCallback; }   
-    void setonExitTransitionDidStartCallback(const std::function<void()>& callback) { _onExitTransitionDidStartCallback = callback; }
-    const std::function<void()>& getonExitTransitionDidStartCallback() const { return _onExitTransitionDidStartCallback; }
-    
+    virtual void setOpacityModifyRGB(bool value) {CC_UNUSED_PARAM(value);}
+    virtual bool isOpacityModifyRGB() const { return false; }
+
+
+    // 设置Node生命周期回调函数
+    void setOnEnterCallback(const std::function<void()>& callback);
+    const std::function<void()>& getOnEnterCallback() const;
+
+    void setOnExitCallback(const std::function<void()>& callback);
+    const std::function<void()>& getOnExitCallback() const;
+
+    void setOnEnterTransitionDidFinishCallback(const std::function<void()>& callback);
+    const std::function<void()>& getOnEnterTransitionDidFinishCallback() const;
+
+    void setOnExitTransitionDidStartCallback(const std::function<void()>& callback);
+    const std::function<void()>& getOnExitTransitionDidStartCallback() const;
+
+
     /** get & set camera mask, the node is visible by the camera whose camera flag & node's camera mask is true */
-    unsigned short getCameraMask() const { return _cameraMask; }
+    unsigned short getCameraMask() const;
     virtual void setCameraMask(unsigned short mask, bool applyChildren = true);
 
 CC_CONSTRUCTOR_ACCESS:
@@ -1801,21 +1576,6 @@ protected:
     
     ComponentContainer *_componentContainer;        ///< Dictionary of components
 
-#if CC_USE_PHYSICS
-    PhysicsBody* _physicsBody;        ///< the physicsBody the node have
-    float _physicsScaleStartX;         ///< the scale x value when setPhysicsBody
-    float _physicsScaleStartY;         ///< the scale y value when setPhysicsBody
-    float _physicsRotation;
-    bool _physicsTransformDirty;
-    bool _updateTransformFromPhysics;
-
-    PhysicsWorld* _physicsWorld; /** The PhysicsWorld associated with the node.*/
-    int _physicsBodyAssociatedWith;  /** The count of PhysicsBody associated with the node and children.*/
-    float _physicsRotationOffset;  /** Record the rotation value when invoke Node::setPhysicsBody.*/
-
-    float _offsetX;
-    float _offsetY;
-#endif
     
     // opacity controls
     GLubyte		_displayedOpacity;
@@ -1837,10 +1597,6 @@ protected:
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Node);
-    
-#if CC_USE_PHYSICS
-    friend class Scene;
-#endif //CC_USTPS
 };
 
 

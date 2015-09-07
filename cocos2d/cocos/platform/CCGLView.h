@@ -126,7 +126,7 @@ public:
      *
      * @return In ios and android it will return false,if in windows or Mac it will return true.
      */
-    virtual bool windowShouldClose() { return false; };
+    virtual bool windowShouldClose() { return false; }
 
     /** Static method and member so that we can modify it on all platforms before create OpenGL context. 
      *
@@ -142,12 +142,6 @@ public:
     
     /** The OpenGL context attrs. */
     static GLContextAttrs _glContextAttrs;
-
-    /** @deprecated
-     * Polls input events. Subclass must implement methods if platform
-     * does not provide event callbacks.
-     */
-    CC_DEPRECATED_ATTRIBUTE virtual void pollInputEvents();
     
     /** Polls the events. */
     virtual void pollEvents();
@@ -242,13 +236,7 @@ public:
      *                         [3] SHOW_ALL  Full screen with black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two black borders will be shown.
      */
     virtual void setDesignResolutionSize(float width, float height, ResolutionPolicy resolutionPolicy);
-
-    /** Get design resolution size.
-     *  Default resolution size is the same as 'getFrameSize'.
-     *
-     * @return The design resolution size.
-     */
-    virtual const Size&  getDesignResolutionSize() const;
+    virtual const Size& getDesignResolutionSize() const;
 
     /**
      * Set opengl view port rectangle with points.
@@ -289,11 +277,6 @@ public:
      * @param viewname A string will be set to the view as name.
      */
     virtual void setViewName(const std::string& viewname);
-    
-    /** Get the view name.
-     *
-     * @return The view name.
-     */
     const std::string& getViewName() const;
 
     /** Touch events are handled by default; if you want to customize your handlers, please override this function.

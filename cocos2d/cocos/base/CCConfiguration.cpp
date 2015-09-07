@@ -102,9 +102,9 @@ std::string Configuration::getInfo() const
 
 void Configuration::gatherGPUInfo()
 {
-	_valueDict["gl.vendor"] = Value((const char*)glGetString(GL_VENDOR));
+	_valueDict["gl.vendor"]   = Value((const char*)glGetString(GL_VENDOR));
 	_valueDict["gl.renderer"] = Value((const char*)glGetString(GL_RENDERER));
-	_valueDict["gl.version"] = Value((const char*)glGetString(GL_VERSION));
+	_valueDict["gl.version"]  = Value((const char*)glGetString(GL_VERSION));
 
     _glExtensions = (char *)glGetString(GL_EXTENSIONS);
 
@@ -146,10 +146,8 @@ void Configuration::gatherGPUInfo()
     CHECK_GL_ERROR_DEBUG();
 }
 
-Configuration* Configuration::getInstance()
-{
-    if (! s_sharedConfiguration)
-    {
+Configuration* Configuration::getInstance() {
+    if (! s_sharedConfiguration) {
         s_sharedConfiguration = new (std::nothrow) Configuration();
         s_sharedConfiguration->init();
     }
@@ -157,26 +155,12 @@ Configuration* Configuration::getInstance()
     return s_sharedConfiguration;
 }
 
-void Configuration::destroyInstance()
-{
+void Configuration::destroyInstance() {
     CC_SAFE_RELEASE_NULL(s_sharedConfiguration);
 }
 
-// FIXME: deprecated
-Configuration* Configuration::sharedConfiguration()
-{
-    return Configuration::getInstance();
-}
 
-// FIXME: deprecated
-void Configuration::purgeConfiguration()
-{
-    Configuration::destroyInstance();
-}
-
-
-bool Configuration::checkForGLExtension(const std::string &searchName) const
-{
+bool Configuration::checkForGLExtension(const std::string &searchName) const {
    return  (_glExtensions && strstr(_glExtensions, searchName.c_str() ) ) ? true : false;
 }
 
@@ -184,33 +168,27 @@ bool Configuration::checkForGLExtension(const std::string &searchName) const
 // getters for specific variables.
 // Mantained for backward compatiblity reasons only.
 //
-int Configuration::getMaxTextureSize() const
-{
+int Configuration::getMaxTextureSize() const {
 	return _maxTextureSize;
 }
 
-int Configuration::getMaxModelviewStackDepth() const
-{
+int Configuration::getMaxModelviewStackDepth() const {
 	return _maxModelviewStackDepth;
 }
 
-int Configuration::getMaxTextureUnits() const
-{
+int Configuration::getMaxTextureUnits() const {
 	return _maxTextureUnits;
 }
 
-bool Configuration::supportsNPOT() const
-{
+bool Configuration::supportsNPOT() const {
 	return _supportsNPOT;
 }
 
-bool Configuration::supportsPVRTC() const
-{
+bool Configuration::supportsPVRTC() const {
 	return _supportsPVRTC;
 }
 
-bool Configuration::supportsETC() const
-{
+bool Configuration::supportsETC() const {
     //GL_ETC1_RGB8_OES is not defined in old opengl version
 #ifdef GL_ETC1_RGB8_OES
     return _supportsETC1;
@@ -300,33 +278,27 @@ void Configuration::loadConfigFile(const std::string& filename)
 	// search for metadata
 	bool validMetadata = false;
 	auto metadataIter = dict.find("metadata");
-	if (metadataIter != dict.cend() && metadataIter->second.getType() == Value::Type::MAP)
-    {
-        
+	if (metadataIter != dict.cend() && metadataIter->second.getType() == Value::Type::MAP) {
 		const auto& metadata = metadataIter->second.asValueMap();
         auto formatIter = metadata.find("format");
         
-		if (formatIter != metadata.cend())
-        {
+		if (formatIter != metadata.cend()) {
 			int format = formatIter->second.asInt();
 
 			// Support format: 1
-			if (format == 1)
-            {
+			if (format == 1) {
 				validMetadata = true;
 			}
 		}
 	}
 
-	if (! validMetadata)
-    {
+	if (! validMetadata) {
 		CCLOG("Invalid config format for file: %s", filename.c_str());
 		return;
 	}
 
 	auto dataIter = dict.find("data");
-	if (dataIter == dict.cend() || dataIter->second.getType() != Value::Type::MAP)
-    {
+	if (dataIter == dict.cend() || dataIter->second.getType() != Value::Type::MAP) {
 		CCLOG("Expected 'data' dict, but not found. Config file: %s", filename.c_str());
 		return;
 	}
@@ -334,8 +306,7 @@ void Configuration::loadConfigFile(const std::string& filename)
 	// Add all keys in the existing dictionary
     
 	const auto& dataMap = dataIter->second.asValueMap();
-    for (auto dataMapIter = dataMap.cbegin(); dataMapIter != dataMap.cend(); ++dataMapIter)
-    {
+    for (auto dataMapIter = dataMap.cbegin(); dataMapIter != dataMap.cend(); ++dataMapIter) {
         if (_valueDict.find(dataMapIter->first) == _valueDict.cend())
             _valueDict[dataMapIter->first] = dataMapIter->second;
         else
